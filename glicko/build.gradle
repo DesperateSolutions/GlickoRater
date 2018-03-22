@@ -1,4 +1,4 @@
-group 'org.desperate.solutions'
+group 'desperate.solutions'
 version '1.0'
 
 apply plugin: 'groovy'
