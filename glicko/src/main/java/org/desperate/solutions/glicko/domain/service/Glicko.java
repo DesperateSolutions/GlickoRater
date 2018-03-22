@@ -1,104 +1,129 @@
 package org.desperate.solutions.glicko.domain.service;
 
+import org.desperate.solutions.glicko.domain.model.Player;
+
 public class Glicko {
+    private final static double DEFAULT_RATING = 1500D;
+    private final static double DEFAULT_RD = 200D;
+    private final static double DEFAULT_VOLATILITY = 0.06D;
+    private final static double DEFAULT_TAU = 0.5D;
+    private final static double SCALE = 173.7178D;
+    private final static double EPSILON = 0.000001D;
+
     //Step 2
-    public static double convertRatingToGlicko2(double rating) {
-        return (rating - 1500) / 173.7178;
+    private static double convertRatingToGlicko2(double rating) {
+        return (rating - DEFAULT_RATING) / SCALE;
     }
 
-    public static double convertRdToGlicko2(double rd) {
-        return rd / 173.7178;
+    private static double convertRdToGlicko2(double rd) {
+        return rd / SCALE;
     }
 
     //Step 3
+    private static double volatilityG(double rd) {
+        return 1 / Math.sqrt(1 + ((3 * Math.pow(rd, 2)) / Math.pow(Math.PI, 2)));
+    }
+
+    private static double volatilityE(double rating1, double rating2, double g) {
+        return 1 / (1 + Math.exp((-1 * g) * (rating1 - rating2)));
+    }
+
+    private static double variance(double e, double g) {
+        return 1 / (Math.pow(g, 2) * e * (1 - e));
+    }
+
+    //Step 4
+    public static double delta(double e, double g, double variance, double result) {
+        return variance * g * (result - e);
+    }
+
+    //Step 5
+    private static double f(double x, double delta, double rd, double v, double a) {
+        return (Math.exp(x) * (Math.pow(delta, 2) - Math.pow(rd, 2) - v - Math.exp(x)) /
+                (2.0 * Math.pow(Math.pow(rd, 2) + v + Math.exp(x), 2))) - ((x - a) / Math.pow(DEFAULT_TAU, 2));
+    }
+
+    private static double volatilityMarked(double delta, double rd, double volatility, double v) {
+        double a = Math.log(Math.pow(volatility, 2));
+
+        double A = a;
+        double B;
+        if (Math.pow(delta, 2) > Math.pow(rd, 2) + v) {
+            B = Math.log(Math.pow(delta, 2) - Math.pow(rd, 2) - v);
+        } else {
+            double k = 1;
+            B = a - (k * Math.abs(DEFAULT_TAU));
+
+            while (f(B, delta, rd, v, a) < 0) {
+                k++;
+                B = a - (k * Math.abs(DEFAULT_TAU));
+            }
+        }
+
+        double fA = f(A, delta, rd, v, a);
+        double fB = f(B, delta, rd, v, a);
+
+        while (Math.abs(B - A) > EPSILON) {
+            double C = A + (((A - B) * fA) / (fB - fA));
+            double fC = f(C, delta, rd, v, a);
+
+            if (fC * fB < 0) {
+                A = B;
+                fA = fB;
+            } else {
+                fA = fA / 2.0;
+            }
+
+            B = C;
+            fB = fC;
+        }
+
+        return Math.exp(A / 2.0);
+    }
+
+    //Step 6
+    private static double preRatingRd(double rd, double rdMarked) {
+        return Math.sqrt(Math.pow(rd, 2) + Math.pow(rdMarked, 2));
+    }
+
+    //Step 7
+    private static double rdMarked(double rdStarred, double v) {
+        return 1 / Math.sqrt((1 / Math.pow(rdStarred, 2)) + (1 / v));
+    }
+
+    private static double ratingMarked(double rating, double rdMarked, double g, double result, double e) {
+        return rating + (Math.pow(rdMarked, 2) * g * (result - e));
+    }
 
 
-    /*
+    public static double noGamesRd(double volatility, double rd) {
+        return SCALE * preRatingRd(convertRdToGlicko2(rd), volatility);
+    }
 
-;;Step 3
-(defn- get-volatile-g [rd]
-  (/ 1 (Math/sqrt (+ 1 (/ (* 3 (Math/pow rd 2)) (Math/pow (Math/PI) 2))))))
+    public static Player defaultPlayer(String name) {
+        return new Player(name, DEFAULT_RATING, DEFAULT_RD, DEFAULT_VOLATILITY);
+    }
 
-(defn- get-volatile-e [rating1 rating2 g]
-  (/ 1 (+ 1 (Math/exp (* (* -1 g) (- rating1 rating2))))))
-
-(defn- get-variance [e g]
-  (/ 1 (* (Math/pow g 2) e (- 1 e))))
-
-
-;;Step 4
-(defn- get-delta [e g v result]
-  (* v g (- result e)))
-
-;;Step 5
-;;The F(x) function we got. Set up as partial most of the time
-(defn- get-f [a delta rd v tau x]
-  (- (/ (* (Math/exp x) (- (Math/pow delta 2) (Math/pow rd 2) v (Math/exp x))) (* 2 (Math/pow (+ (Math/pow rd 2) v (Math/exp x)) 2))) (/ (- x a) (Math/pow tau 2))))
-
-;;Helper Function for getting B
-(defn- get-b [k r a delta rd v f]
-  (if (< (f (- a (* k r))) 0)
-    (recur (inc k) r a delta rd v f)
-    (- a (* k r) delta rd v)))
-
-;;Helper function for iterative part of Step 5
-(defn- get-ab [a b fa fb delta rd v r epsilon f]
-  (if (> (Math/abs (- a b)) epsilon)
-    (let [c (+ a (/ (* (- a b) fa) (- fb fa)))
-          fc (f c)]
-      (if (< (* fc fb) 0)
-        (recur b c fb fc delta rd v r epsilon f)
-        (recur a c (/ fa 2) fc delta rd v r epsilon f)))
-    (Math/exp (/ a 2))))
-
-;;The setup for the iterative part of Step 5
-(defn- new-volatile [delta rd volatility v tau]
-  (let [epsilon 0.000001
-        a (Math/log (Math/pow volatility 2))
-        f (partial get-f a delta rd v tau)
-        b (if (> (Math/pow delta 2) (+ (Math/pow rd 2) v))
-            (Math/log (- (Math/pow delta 2) (Math/pow rd 2) v))
-            (get-b 1 tau a delta rd v f))]
-    (get-ab a b (f a) (f b) delta rd v tau epsilon f)))
-
-;;Step 6
-(defn- pre-rating-rd [rd rd-marked]
-  (Math/sqrt (+ (Math/pow rd 2) (Math/pow rd-marked 2))))
-
-;;Step 7
-(defn- get-rd-marked [rd-starred v]
-  (/ 1 (Math/sqrt (+ (/ 1 (Math/pow rd-starred 2)) (/ 1 v)))))
-
-(defn- get-rating-marked [rating rd-marked g result e]
-  (+ rating (* (Math/pow rd-marked 2) g (- result e))))
-
-
-;;Only if no games in period
-(defn update-rd-no-games [{volatility :volatility rd :rating-rd :as player}]
-  (assoc player :rating-rd (* 173.7178 (pre-rating-rd (convert-rd-to-glicko2 rd) volatility))))
-
-
-;;Actual maintainer
-(defn get-glicko2 [{rating1 :rating rd1 :rating-rd volatility :volatility :as player} {rating2 :rating rd2 :rating-rd} result]
-  (let [;;Step 2
-        rating1 (convert-rating-to-glicko2 rating1)
-        rd1 (convert-rd-to-glicko2 rd1)
-        rating2 (convert-rating-to-glicko2 rating2)
-        rd2 (convert-rd-to-glicko2 rd2)
-        ;;Step 3
-        g (get-volatile-g rd2)
-        e (get-volatile-e rating1 rating2 g)
-        variance (get-variance e g)
-        ;;Step 4
-        delta (get-delta e g variance result)
-        ;;Step 5
-        volatility-marked (new-volatile delta rd1 volatility variance 0.5)
-        ;;Step 6
-        rd-starred (pre-rating-rd rd1 volatility-marked)
-        ;;Step 7
-        rd-marked (get-rd-marked rd-starred variance)
-        rating-marked (get-rating-marked rating1 rd-marked g result e)]
-    ;;Step 8
-    (assoc player :rating (+ 1500 (* 173.7178 rating-marked)) :rating-rd (* 173.7178 rd-marked) :volatility volatility-marked :has-played "true")))
-     */
+    public static Player glicko2(Player player1, Player player2, double result) {
+        //Step 2
+        double player1Rating = convertRatingToGlicko2(player1.rating());
+        double player1Rd = convertRdToGlicko2(player1.rd());
+        double player2Rating = convertRatingToGlicko2(player2.rating());
+        double player2Rd = convertRdToGlicko2(player2.rd());
+        //Step 3
+        double g = volatilityG(player2Rd);
+        double e = volatilityE(player1Rating, player2Rating, g);
+        double variance = variance(e, g);
+        //Step 4
+        double delta = delta(e, g, variance, result);
+        //Step 5
+        double volatilityMarked = volatilityMarked(delta, player1Rd, player1.volatility(), variance);
+        //Step 6
+        double rdStarred = preRatingRd(player1Rd, volatilityMarked);
+        //Step 7
+        double rdMarked = rdMarked(rdStarred, variance);
+        double ratingMarked = ratingMarked(player1Rating, rdMarked, g, result, e);
+        //Step 8
+        return new Player(player1.name(), DEFAULT_RATING + (SCALE * ratingMarked), SCALE * rdMarked, volatilityMarked);
+    }
 }
