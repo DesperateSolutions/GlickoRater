@@ -2,7 +2,7 @@ package solutions.desperate.glicko.domain.service;
 
 import solutions.desperate.glicko.domain.model.Player;
 
-public class Glicko {
+public class DoubleGlicko {
     private final static double DEFAULT_RATING = 1500D;
     private final static double DEFAULT_RD = 200D;
     private final static double DEFAULT_VOLATILITY = 0.06D;
@@ -10,14 +10,22 @@ public class Glicko {
     private final static double SCALE = 173.7178D;
     private final static double EPSILON = 0.000001D;
 
+
+    public static void main(String[] args) {
+        System.out.println(volatilityE(convertRatingToGlicko2(DEFAULT_RATING), convertRatingToGlicko2(DEFAULT_RATING),volatilityG(convertRdToGlicko2(DEFAULT_RD))));
+    }
+
     //Step 2
     private static double convertRatingToGlicko2(double rating) {
         return (rating - DEFAULT_RATING) / SCALE;
     }
 
+
+
     private static double convertRdToGlicko2(double rd) {
         return rd / SCALE;
     }
+
 
     //Step 3
     private static double volatilityG(double rd) {
@@ -33,7 +41,7 @@ public class Glicko {
     }
 
     //Step 4
-    public static double delta(double e, double g, double variance, double result) {
+    private static double delta(double e, double g, double variance, int result) {
         return variance * g * (result - e);
     }
 
@@ -91,20 +99,19 @@ public class Glicko {
         return 1 / Math.sqrt((1 / Math.pow(rdStarred, 2)) + (1 / v));
     }
 
-    private static double ratingMarked(double rating, double rdMarked, double g, double result, double e) {
+    private static double ratingMarked(double rating, double rdMarked, double g, int result, double e) {
         return rating + (Math.pow(rdMarked, 2) * g * (result - e));
     }
 
-
-    public static double noGamesRd(double volatility, double rd) {
-        return SCALE * preRatingRd(convertRdToGlicko2(rd), volatility);
+    public Player noGamesRd(Player player) {
+        return new Player(player.name(), player.rating(), SCALE * preRatingRd(convertRdToGlicko2(player.rd()), player.volatility()), player.volatility());
     }
 
-    public static Player defaultPlayer(String name) {
+    public Player defaultPlayer(String name) {
         return new Player(name, DEFAULT_RATING, DEFAULT_RD, DEFAULT_VOLATILITY);
     }
-
-    public static Player glicko2(Player player1, Player player2, double result) {
+    
+    public Player glicko2(Player player1, Player player2, int result) {
         //Step 2
         double player1Rating = convertRatingToGlicko2(player1.rating());
         double player1Rd = convertRdToGlicko2(player1.rd());

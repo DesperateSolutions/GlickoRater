@@ -46,7 +46,7 @@ public class LeagueApi {
     @ApiOperation(value = "Delete a league")
     @DELETE
     @Path("{id}")
-    public void deleteGame(@ApiParam(required = true, value = "ID of the league being deleted") @PathParam("id") String id) {
+    public void deleteLeague(@ApiParam(required = true, value = "ID of the league being deleted") @PathParam("id") String id) {
         //noop
     }
 }

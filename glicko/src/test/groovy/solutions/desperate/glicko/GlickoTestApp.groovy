@@ -20,7 +20,7 @@ class GlickoTestApp extends Specification {
         addShutdownHook {app.terminate() }
     }
 
-    def class Client {
+    class Client {
         OkHttpClient client
         String baseUrl
 
