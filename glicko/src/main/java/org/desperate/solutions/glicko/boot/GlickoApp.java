@@ -13,8 +13,8 @@ public class GlickoApp {
         this.apiStarter = apiStarter;
     }
 
-    public void startApp() {
-        server = apiStarter.init();
+    public void startApp(int port) {
+        server = apiStarter.init(port);
         try {
             server.start();
         } catch (Exception e) {
@@ -27,6 +27,16 @@ public class GlickoApp {
             server.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void terminate() {
+        try {
+            server.stop();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            server.destroy();
         }
     }
 }

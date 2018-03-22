@@ -20,6 +20,14 @@ public class GameApi {
         //Noop
     }
 
+    @ApiOperation(value = "Add mutliple games to a league")
+    @POST
+    @Path("batch")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void addGames(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") String leagueId, List<GameDto> game) {
+        //Noop
+    }
+
     @ApiOperation(value = "Lists all games from a league")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
