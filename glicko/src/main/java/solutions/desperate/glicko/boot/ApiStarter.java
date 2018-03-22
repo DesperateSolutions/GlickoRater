@@ -62,10 +62,10 @@ public class ApiStarter {
 
     private QueuedThreadPool threadPool() {
         QueuedThreadPool threadPool = new QueuedThreadPool(
-                300,
-                10,
+                20,
+                4,
                 200000,
-                new BlockingArrayQueue<>(10, 300, 6000)
+                new BlockingArrayQueue<>(4, 20, 600)
         );
         threadPool.setDaemon(true);
         return threadPool;

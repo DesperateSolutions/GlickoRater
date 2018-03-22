@@ -17,7 +17,9 @@ public class GameApi {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public void addGame(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") String leagueId, GameDto game) {
-        //Noop
+        if (!game.isValid()) {
+            throw new BadRequestException("Invalid input");
+        }
     }
 
     @ApiOperation(value = "Add mutliple games to a league")
@@ -25,7 +27,11 @@ public class GameApi {
     @Path("batch")
     @Consumes(MediaType.APPLICATION_JSON)
     public void addGames(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") String leagueId, List<GameDto> game) {
-        //Noop
+        game.forEach(g -> {
+            if (g.isValid()) {
+                throw new BadRequestException("Invalid input");
+            }
+        });
     }
 
     @ApiOperation(value = "Lists all games from a league")
