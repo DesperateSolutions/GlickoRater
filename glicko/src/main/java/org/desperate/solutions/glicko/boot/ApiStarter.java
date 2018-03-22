@@ -34,19 +34,19 @@ public class ApiStarter {
         this.endpoints = ImmutableSet.of(statusApi, swaggerApi);
     }
 
-    public Server init() {
+    public Server init(int port) {
         Server server = new Server(threadPool());
         server.setStopAtShutdown(true);
         server.setHandler(apiHandler());
-        server.addConnector(serverConnector(server));
+        server.addConnector(serverConnector(server, port));
         removeVersionTag(server);
         return server;
     }
 
-    private ServerConnector serverConnector(Server server) {
+    private ServerConnector serverConnector(Server server, int port) {
         ServerConnector connector = new ServerConnector(server);
         connector.setHost("0.0.0.0");
-        connector.setPort(3000);
+        connector.setPort(port);
         connector.setIdleTimeout(200000);
         return connector;
     }

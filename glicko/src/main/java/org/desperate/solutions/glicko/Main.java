@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         Injector injector = Guice.createInjector(new AppModule());
         GlickoApp app = injector.getInstance(GlickoApp.class);
-        app.startApp();
+        app.startApp(3000);
         app.join();
     }
 }
