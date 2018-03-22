@@ -5,6 +5,8 @@ import io.swagger.models.Swagger;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 @Path("swagger.json")
 public class SwaggerApi {
@@ -15,6 +17,7 @@ public class SwaggerApi {
         this.swagger = initSwagger();
     }
 
+    @Produces(MediaType.APPLICATION_JSON)
     @GET
     public Swagger swagger() {
         return swagger;
