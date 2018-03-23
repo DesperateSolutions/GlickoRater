@@ -18,6 +18,6 @@ public class PlayerView {
     }
 
     public static PlayerView fromDomain(Player player) {
-        return new PlayerView(player.name(), player.rating(), player.rd(), player.volatility());
+        return new PlayerView(player.name(), player.rating().doubleValue(), player.rd().doubleValue(), player.volatility().doubleValue());
     }
 }

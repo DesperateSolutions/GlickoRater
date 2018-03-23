@@ -1,19 +1,17 @@
 package solutions.desperate.glicko.domain.service;
 
 import solutions.desperate.glicko.domain.model.Player;
+import solutions.desperate.glicko.domain.service.glicko.Glicko;
 
-public class DoubleGlicko {
+import java.math.BigDecimal;
+
+public class DoubleGlicko implements Glicko {
     private final static double DEFAULT_RATING = 1500D;
     private final static double DEFAULT_RD = 200D;
     private final static double DEFAULT_VOLATILITY = 0.06D;
     private final static double DEFAULT_TAU = 0.5D;
     private final static double SCALE = 173.7178D;
     private final static double EPSILON = 0.000001D;
-
-
-    public static void main(String[] args) {
-        System.out.println(volatilityE(convertRatingToGlicko2(DEFAULT_RATING), convertRatingToGlicko2(DEFAULT_RATING),volatilityG(convertRdToGlicko2(DEFAULT_RD))));
-    }
 
     //Step 2
     private static double convertRatingToGlicko2(double rating) {
@@ -71,6 +69,8 @@ public class DoubleGlicko {
         double fA = f(A, delta, rd, v, a);
         double fB = f(B, delta, rd, v, a);
 
+        //System.out.println(fB);
+
         while (Math.abs(B - A) > EPSILON) {
             double C = A + (((A - B) * fA) / (fB - fA));
             double fC = f(C, delta, rd, v, a);
@@ -103,20 +103,20 @@ public class DoubleGlicko {
         return rating + (Math.pow(rdMarked, 2) * g * (result - e));
     }
 
-    public Player noGamesRd(Player player) {
-        return new Player(player.name(), player.rating(), SCALE * preRatingRd(convertRdToGlicko2(player.rd()), player.volatility()), player.volatility());
+    public Player defaultPlayer(String name) {
+        return new Player(name, BigDecimal.valueOf(DEFAULT_RATING), BigDecimal.valueOf(DEFAULT_RD),BigDecimal.valueOf(DEFAULT_VOLATILITY));
     }
 
-    public Player defaultPlayer(String name) {
-        return new Player(name, DEFAULT_RATING, DEFAULT_RD, DEFAULT_VOLATILITY);
+    public Player noGamesRd(Player player) {
+        return new Player(player.name(), player.rating(), BigDecimal.valueOf(SCALE * preRatingRd(convertRdToGlicko2(player.rd().doubleValue()), player.volatility().doubleValue())), player.volatility());
     }
-    
+
     public Player glicko2(Player player1, Player player2, int result) {
         //Step 2
-        double player1Rating = convertRatingToGlicko2(player1.rating());
-        double player1Rd = convertRdToGlicko2(player1.rd());
-        double player2Rating = convertRatingToGlicko2(player2.rating());
-        double player2Rd = convertRdToGlicko2(player2.rd());
+        double player1Rating = convertRatingToGlicko2(player1.rating().doubleValue());
+        double player1Rd = convertRdToGlicko2(player1.rd().doubleValue());
+        double player2Rating = convertRatingToGlicko2(player2.rating().doubleValue());
+        double player2Rd = convertRdToGlicko2(player2.rd().doubleValue());
         //Step 3
         double g = volatilityG(player2Rd);
         double e = volatilityE(player1Rating, player2Rating, g);
@@ -124,13 +124,13 @@ public class DoubleGlicko {
         //Step 4
         double delta = delta(e, g, variance, result);
         //Step 5
-        double volatilityMarked = volatilityMarked(delta, player1Rd, player1.volatility(), variance);
+        double volatilityMarked = volatilityMarked(delta, player1Rd, player1.volatility().doubleValue(), variance);
         //Step 6
         double rdStarred = preRatingRd(player1Rd, volatilityMarked);
         //Step 7
         double rdMarked = rdMarked(rdStarred, variance);
         double ratingMarked = ratingMarked(player1Rating, rdMarked, g, result, e);
         //Step 8
-        return new Player(player1.name(), DEFAULT_RATING + (SCALE * ratingMarked), SCALE * rdMarked, volatilityMarked);
+        return new Player(player1.name(), BigDecimal.valueOf(DEFAULT_RATING + (SCALE * ratingMarked)), BigDecimal.valueOf(SCALE * rdMarked), BigDecimal.valueOf(volatilityMarked));
     }
 }
