@@ -2,6 +2,7 @@ package solutions.desperate.glicko.api;
 
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Swagger;
+import io.swagger.models.auth.OAuth2Definition;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -20,6 +21,7 @@ public class SwaggerApi {
     @Produces(MediaType.APPLICATION_JSON)
     @GET
     public Swagger swagger() {
+        swagger.addSecurityDefinition("bearer", new OAuth2Definition().password("http://localhost:3000/token"));
         return swagger;
     }
 

@@ -3,6 +3,7 @@ package solutions.desperate.glicko.api;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.Authorization;
 import org.bson.types.ObjectId;
 import solutions.desperate.glicko.api.command.AddLeague;
 import solutions.desperate.glicko.api.command.UpdateLeague;
@@ -27,21 +28,23 @@ public class LeagueApi {
     }
 
 
-    @ApiOperation(value = "Add a league")
+    @ApiOperation(value = "Add a league", authorizations = @Authorization("bearer"))
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public void addLeague(AddLeague league) {
+    public void addLeague(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization,
+                          AddLeague league) {
         if (league.isNotValid()) {
             throw new BadRequestException("Invalid league");
         }
         leagueService.addLeague(League.fromCommand(league));
     }
 
-    @ApiOperation(value = "Update a league")
+    @ApiOperation(value = "Update a league", authorizations = @Authorization("bearer"))
     @PUT
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void updateLeague(@ApiParam(required = true, value = "ID of the league being updated") @PathParam("id") ObjectId id, UpdateLeague league) {
+    public void updateLeague(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization,
+                             @ApiParam(required = true, value = "ID of the league being updated") @PathParam("id") ObjectId id, UpdateLeague league) {
         if (league.isNotValid()) {
             throw new BadRequestException("Invalid league");
         }
@@ -63,10 +66,11 @@ public class LeagueApi {
         return LeagueView.fromDomain(leagueService.getLeague(id));
     }
 
-    @ApiOperation(value = "Delete a league")
+    @ApiOperation(value = "Delete a league", authorizations = @Authorization("bearer"))
     @DELETE
     @Path("{id}")
-    public void deleteLeague(@ApiParam(required = true, value = "ID of the league being deleted") @PathParam("id") ObjectId id) {
+    public void deleteLeague(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization,
+                             @ApiParam(required = true, value = "ID of the league being deleted") @PathParam("id") ObjectId id) {
         leagueService.deleteLeague(id);
     }
 }

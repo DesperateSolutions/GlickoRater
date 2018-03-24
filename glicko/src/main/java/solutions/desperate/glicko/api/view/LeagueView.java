@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class LeagueView {
-    public ObjectId id;
-    public String name;
-    public SettingsDto settings;
-    public List<ObjectId> players;
-    public List<ObjectId> games;
+    public final ObjectId id;
+    public final String name;
+    public final SettingsDto settings;
+    public final List<ObjectId> players;
+    public final List<ObjectId> games;
 
     private LeagueView(ObjectId id, String name, SettingsDto settings, List<ObjectId> players, List<ObjectId> games) {
         this.id = id;

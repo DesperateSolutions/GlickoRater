@@ -3,6 +3,7 @@ package solutions.desperate.glicko.api;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.Authorization;
 import org.bson.types.ObjectId;
 import solutions.desperate.glicko.api.command.PlayerCommand;
 import solutions.desperate.glicko.api.view.PlayerView;
@@ -27,21 +28,22 @@ public class PlayerApi {
         this.glicko = glicko;
     }
 
-    @ApiOperation(value = "Adds a player to a league")
+    @ApiOperation(value = "Adds a player to a league", authorizations = @Authorization("bearer"))
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public void addPlayer(@ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") ObjectId leagueId, PlayerCommand player) {
-        //Need to decide on how the model works with regards to league being parent or not
+    public void addPlayer(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization,
+                          @ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") ObjectId leagueId, PlayerCommand player) {
         if(player.isNotValid()) {
             throw new BadRequestException("Invalid player");
         }
         playerService.addPlayer(glicko.defaultPlayer(player.name), leagueId);
     }
 
-    @ApiOperation(value = "Update a player")
+    @ApiOperation(value = "Update a player", authorizations = @Authorization("bearer"))
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public void updatePlayer(@ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") ObjectId leagueId,
+    public void updatePlayer(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization,
+                             @ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") ObjectId leagueId,
                              @ApiParam(required = true, value = "ID of the player being fetched") @PathParam("id") ObjectId id,
                              PlayerCommand player) {
         if(player.isNotValid()) {
@@ -63,16 +65,15 @@ public class PlayerApi {
     @Produces(MediaType.APPLICATION_JSON)
     public PlayerView game(@ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") ObjectId leagueId,
                            @ApiParam(required = true, value = "ID of the player being fetched") @PathParam("id") ObjectId id) {
-        //Need to decide on how the model works with regards to league being parent or not
         return PlayerView.fromDomain(playerService.player(id));
     }
 
-    @ApiOperation(value = "Delete a player from a league. Players who have played games can not be deleted")
+    @ApiOperation(value = "Delete a player from a league. Players who have played games can not be deleted", authorizations = @Authorization("bearer"))
     @DELETE
     @Path("{id}")
-    public void deleteGame(@ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") ObjectId leagueId,
+    public void deleteGame(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization,
+                           @ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") ObjectId leagueId,
                            @ApiParam(required = true, value = "ID of the player being deleted") @PathParam("id") ObjectId id) {
-        //Need to decide on how the model works with regards to league being parent or not
         playerService.deletePlayer(id);
     }
 }

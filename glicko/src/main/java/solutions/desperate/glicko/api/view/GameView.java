@@ -4,10 +4,10 @@ import org.bson.types.ObjectId;
 import solutions.desperate.glicko.domain.model.Game;
 
 public class GameView {
-    public ObjectId id;
-    public ObjectId whiteId;
-    public ObjectId blackId;
-    public String result;
+    public final ObjectId id;
+    public final ObjectId whiteId;
+    public final ObjectId blackId;
+    public final String result;
 
     private GameView(ObjectId id, ObjectId white, ObjectId black, String result) {
         this.id = id;

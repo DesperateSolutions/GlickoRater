@@ -18,6 +18,7 @@ import org.glassfish.jersey.server.filter.EncodingFilter;
 import org.glassfish.jersey.servlet.ServletContainer;
 import solutions.desperate.glicko.api.*;
 import solutions.desperate.glicko.infrastructure.GsonJerseyProvider;
+import solutions.desperate.glicko.infrastructure.HeaderFilter;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Application;
@@ -32,8 +33,10 @@ public class ApiStarter {
                       LeagueApi leagueApi,
                       PlayerApi playerApi,
                       GameApi gameApi,
+                      UserApi userApi,
+                      TokenApi tokenApi,
                       SwaggerApi swaggerApi) {
-        this.endpoints = ImmutableSet.of(statusApi, leagueApi, playerApi, gameApi, swaggerApi);
+        this.endpoints = ImmutableSet.of(statusApi, leagueApi, playerApi, gameApi, userApi, tokenApi, swaggerApi);
     }
 
     public Server init(int port) {
@@ -107,7 +110,7 @@ public class ApiStarter {
             public Set<Object> getSingletons() {
                 return endpoints;
             }
-        }).register(GsonJerseyProvider.class).register(SwaggerSerializers.class);
+        }).register(GsonJerseyProvider.class).register(SwaggerSerializers.class).register(HeaderFilter.class);
         EncodingFilter.enableFor(resourceConfig);
 
         return resourceConfig;
