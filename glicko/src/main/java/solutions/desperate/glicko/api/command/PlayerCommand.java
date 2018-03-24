@@ -11,7 +11,7 @@ public class PlayerCommand {
     public String name;
 
     @Transient
-    public boolean isValid() {
-        return Stream.of(name).allMatch(Objects::nonNull);
+    public boolean isNotValid() {
+        return Stream.of(name).noneMatch(Objects::nonNull);
     }
 }

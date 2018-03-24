@@ -44,7 +44,7 @@ public class BigDecimalGlicko implements Glicko {
     }
 
     //Step 4
-    public static BigDecimal delta(BigDecimal e, BigDecimal g, BigDecimal variance, int result) {
+    public static BigDecimal delta(BigDecimal e, BigDecimal g, BigDecimal variance, double result) {
         return variance.multiply(g).multiply(BigDecimal.valueOf(result).subtract(e));
     }
 
@@ -104,7 +104,7 @@ public class BigDecimalGlicko implements Glicko {
         return ONE.divide(sqrt(ONE.divide(rdStarred.pow(2), PRECISION).add(ONE.divide(v, PRECISION)), PRECISION), PRECISION);
     }
 
-    private static BigDecimal ratingMarked(BigDecimal rating, BigDecimal rdMarked, BigDecimal g, int result, BigDecimal e) {
+    private static BigDecimal ratingMarked(BigDecimal rating, BigDecimal rdMarked, BigDecimal g, double result, BigDecimal e) {
         return rating.add(rdMarked.pow(2).multiply(g).multiply(BigDecimal.valueOf(result).subtract(e)));
     }
 
@@ -118,7 +118,7 @@ public class BigDecimalGlicko implements Glicko {
         return new Player(name, DEFAULT_RATING, DEFAULT_RD, DEFAULT_VOLATILITY);
     }
 
-    public Player glicko2(Player player1, Player player2, int result) {
+    public Player glicko2(Player player1, Player player2, double result) {
         //Step 2
         BigDecimal player1Rating = convertRatingToGlicko2(player1.rating());
         BigDecimal player1Rd = convertRdToGlicko2(player1.rd());

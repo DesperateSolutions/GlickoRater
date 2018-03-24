@@ -1,18 +1,7 @@
 package solutions.desperate.glicko.boot;
 
-import com.fasterxml.jackson.databind.JavaType;
 import com.google.common.collect.ImmutableSet;
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.converter.ModelConverter;
-import io.swagger.converter.ModelConverterContext;
-import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
-import io.swagger.models.Model;
-import io.swagger.models.properties.Property;
-import io.swagger.util.Json;
-import org.bson.types.ObjectId;
-import solutions.desperate.glicko.api.*;
-import solutions.desperate.glicko.infrastructure.GsonJerseyProvider;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
@@ -27,13 +16,12 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.EncodingFilter;
 import org.glassfish.jersey.servlet.ServletContainer;
+import solutions.desperate.glicko.api.*;
+import solutions.desperate.glicko.infrastructure.GsonJerseyProvider;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Application;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Set;
 
 public class ApiStarter {
