@@ -2,9 +2,7 @@ package solutions.desperate.glicko.api.command;
 
 import io.swagger.annotations.ApiModelProperty;
 import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Reference;
 import solutions.desperate.glicko.api.dto.SettingsDto;
-import solutions.desperate.glicko.domain.model.League;
 
 import java.beans.Transient;
 import java.util.List;
