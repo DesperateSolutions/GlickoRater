@@ -5,6 +5,7 @@ import com.google.inject.Injector
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import solutions.desperate.glicko.boot.GlickoApp
+import solutions.desperate.glicko.infrastructure.Config
 import spock.lang.Specification
 
 class GlickoTestApp extends Specification {
@@ -14,9 +15,9 @@ class GlickoTestApp extends Specification {
     def setupSpec() {
         int port = new Random().nextInt(10000) + 10000
         client = new Client(port)
-        Injector injector = Guice.createInjector(new AppTestModule())
+        Injector injector = Guice.createInjector(new AppTestModule(new Config(port)))
         app = injector.getInstance(GlickoApp.class)
-        app.startApp(port)
+        app.startApp()
         addShutdownHook {app.terminate() }
     }
 

@@ -1,5 +1,6 @@
 package solutions.desperate.glicko.domain.service;
 
+import org.bson.types.ObjectId;
 import solutions.desperate.glicko.domain.model.User;
 import solutions.desperate.glicko.infrastructure.MongoDb;
 
@@ -15,5 +16,9 @@ public class UserService {
 
     public void addUser(User user) {
         mongoDb.store(user);
+    }
+
+    public void deleteUser(ObjectId id) {
+        mongoDb.delete(User.class, id);
     }
 }

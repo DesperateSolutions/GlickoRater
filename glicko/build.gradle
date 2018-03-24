@@ -51,6 +51,7 @@ jar {
 }
 
 shadowJar {
+    dependsOn build
     baseName = 'glicko-rater'
     classifier = null
     version = 1.0
