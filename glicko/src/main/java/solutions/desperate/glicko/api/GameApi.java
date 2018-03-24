@@ -3,7 +3,8 @@ package solutions.desperate.glicko.api;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import solutions.desperate.glicko.api.dto.GameDto;
+import solutions.desperate.glicko.api.command.GameCommand;
+import solutions.desperate.glicko.api.view.GameView;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -16,7 +17,7 @@ public class GameApi {
     @ApiOperation(value = "Add a game to a league")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public void addGame(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") String leagueId, GameDto game) {
+    public void addGame(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") String leagueId, GameCommand game) {
         if (!game.isValid()) {
             throw new BadRequestException("Invalid input");
         }
@@ -26,7 +27,7 @@ public class GameApi {
     @POST
     @Path("batch")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void addGames(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") String leagueId, List<GameDto> game) {
+    public void addGames(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") String leagueId, List<GameCommand> game) {
         game.forEach(g -> {
             if (g.isValid()) {
                 throw new BadRequestException("Invalid input");
@@ -37,7 +38,7 @@ public class GameApi {
     @ApiOperation(value = "Lists all games from a league")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<GameDto> games(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") String leagueId) {
+    public List<GameView> games(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") String leagueId) {
         return null;
     }
 
@@ -45,7 +46,7 @@ public class GameApi {
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public GameDto game(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") String leagueId,
+    public GameView game(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") String leagueId,
                         @ApiParam(required = true, value = "ID of the game being fetched") @PathParam("id") String id) {
         return null;
     }

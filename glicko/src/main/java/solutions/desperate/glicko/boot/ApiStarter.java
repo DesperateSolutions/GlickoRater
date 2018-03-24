@@ -1,9 +1,17 @@
 package solutions.desperate.glicko.boot;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.google.common.collect.ImmutableSet;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.converter.ModelConverter;
+import io.swagger.converter.ModelConverterContext;
+import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
-import solutions.desperate.glicko.api.StatusApi;
-import solutions.desperate.glicko.api.SwaggerApi;
+import io.swagger.models.Model;
+import io.swagger.models.properties.Property;
+import io.swagger.util.Json;
+import org.bson.types.ObjectId;
+import solutions.desperate.glicko.api.*;
 import solutions.desperate.glicko.infrastructure.GsonJerseyProvider;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -22,7 +30,10 @@ import org.glassfish.jersey.servlet.ServletContainer;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Application;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Set;
 
 public class ApiStarter {
@@ -30,8 +41,11 @@ public class ApiStarter {
 
     @Inject
     public ApiStarter(StatusApi statusApi,
+                      LeagueApi leagueApi,
+                      PlayerApi playerApi,
+                      GameApi gameApi,
                       SwaggerApi swaggerApi) {
-        this.endpoints = ImmutableSet.of(statusApi, swaggerApi);
+        this.endpoints = ImmutableSet.of(statusApi, leagueApi, playerApi, gameApi, swaggerApi);
     }
 
     public Server init(int port) {

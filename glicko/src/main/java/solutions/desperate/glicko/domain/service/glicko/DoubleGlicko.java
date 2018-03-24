@@ -1,4 +1,4 @@
-package solutions.desperate.glicko.domain.service;
+package solutions.desperate.glicko.domain.service.glicko;
 
 import solutions.desperate.glicko.domain.model.Player;
 import solutions.desperate.glicko.domain.service.glicko.Glicko;
