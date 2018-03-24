@@ -45,7 +45,7 @@ public class LeagueApi {
         if (league.isNotValid()) {
             throw new BadRequestException("Invalid league");
         }
-        leagueService.updateLeague(League.fromCommand(id, league));
+        throw new NotSupportedException("Not yet implemented");
     }
 
     @ApiOperation(value = "Lists all leagues")

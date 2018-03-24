@@ -28,30 +28,30 @@ public class GameApi {
     @ApiOperation(value = "Add a game to a league")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public void addGame(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") String leagueId, GameCommand game) {
+    public void addGame(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") ObjectId leagueId, GameCommand game) {
         if (!game.isValid()) {
             throw new BadRequestException("Invalid input");
         }
-        gameService.addGame(Game.fromCommand(game));
+        gameService.addGame(Game.fromCommand(game), leagueId);
     }
 
     @ApiOperation(value = "Add mutliple games to a league")
     @POST
     @Path("batch")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void addGames(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") String leagueId, List<GameCommand> game) {
+    public void addGames(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") ObjectId leagueId, List<GameCommand> game) {
         game.forEach(g -> {
             if (g.isValid()) {
                 throw new BadRequestException("Invalid input");
             }
-            gameService.addGame(Game.fromCommand(g));
+            gameService.addGame(Game.fromCommand(g), leagueId);
         });
     }
 
     @ApiOperation(value = "Lists all games from a league")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<GameView> games(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") String leagueId) {
+    public List<GameView> games(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") ObjectId leagueId) {
         return gameService.allGames().map(GameView::fromDomain).collect(Collectors.toList());
     }
 
@@ -59,15 +59,15 @@ public class GameApi {
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public GameView game(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") String leagueId,
+    public GameView game(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") ObjectId leagueId,
                         @ApiParam(required = true, value = "ID of the game being fetched") @PathParam("id") ObjectId id) {
         return GameView.fromDomain(gameService.game(id));
     }
 
-    @ApiOperation(value = "Delete a game from a league")
+    @ApiOperation(value = "Delete a game from a league. Important to note that currently this does not roll back the rating")
     @DELETE
     @Path("{id}")
-    public void deleteGame(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") String leagueId,
+    public void deleteGame(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") ObjectId leagueId,
                            @ApiParam(required = true, value = "ID of the game being deleted") @PathParam("id") ObjectId id) {
         gameService.delete(id);
     }

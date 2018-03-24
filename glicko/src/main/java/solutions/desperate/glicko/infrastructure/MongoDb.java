@@ -3,7 +3,6 @@ package solutions.desperate.glicko.infrastructure;
 import com.mongodb.MongoClient;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.Key;
 import org.mongodb.morphia.Morphia;
 
 import javax.inject.Inject;
@@ -16,10 +15,10 @@ public class MongoDb {
     private final Datastore datastore;
 
     @Inject
-    public MongoDb() {
+    public MongoDb(String modelPackage) {
         MongoClient mongoClient = new MongoClient("docker", 27017);
         Morphia morphia = new Morphia();
-        morphia.mapPackage("solutions.desperate.glicko.domain.model");
+        morphia.mapPackage(modelPackage);
         datastore = morphia.createDatastore(mongoClient, "glicko");
         datastore.ensureIndexes();
     }
@@ -28,7 +27,7 @@ public class MongoDb {
         datastore.save(entity);
     }
 
-    public <T> Stream<T> getList(Class<T> clazz) {
+    public <T> Stream<T> getStream(Class<T> clazz) {
         return StreamSupport.stream(datastore.createQuery(clazz).spliterator(), false);
     }
 

@@ -30,30 +30,30 @@ public class PlayerApi {
     @ApiOperation(value = "Adds a player to a league")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public void addPlayer(@ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") String leagueId, PlayerCommand player) {
+    public void addPlayer(@ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") ObjectId leagueId, PlayerCommand player) {
         //Need to decide on how the model works with regards to league being parent or not
         if(player.isNotValid()) {
             throw new BadRequestException("Invalid player");
         }
-        playerService.addPlayer(glicko.defaultPlayer(player.name));
+        playerService.addPlayer(glicko.defaultPlayer(player.name), leagueId);
     }
 
     @ApiOperation(value = "Update a player")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public void updatePlayer(@ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") String leagueId,
+    public void updatePlayer(@ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") ObjectId leagueId,
                              @ApiParam(required = true, value = "ID of the player being fetched") @PathParam("id") ObjectId id,
                              PlayerCommand player) {
         if(player.isNotValid()) {
             throw new BadRequestException("Invalid player");
         }
-        playerService.updateName(player.name, id);
+        throw new NotSupportedException("Not yet implemented");
     }
 
     @ApiOperation(value = "Lists all players from a league")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PlayerView> games(@ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") String leagueId) {
+    public List<PlayerView> games(@ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") ObjectId leagueId) {
         return playerService.allPlayers().map(PlayerView::fromDomain).collect(Collectors.toList());
     }
 
@@ -61,7 +61,7 @@ public class PlayerApi {
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public PlayerView game(@ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") String leagueId,
+    public PlayerView game(@ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") ObjectId leagueId,
                            @ApiParam(required = true, value = "ID of the player being fetched") @PathParam("id") ObjectId id) {
         //Need to decide on how the model works with regards to league being parent or not
         return PlayerView.fromDomain(playerService.player(id));
@@ -70,7 +70,7 @@ public class PlayerApi {
     @ApiOperation(value = "Delete a player from a league. Players who have played games can not be deleted")
     @DELETE
     @Path("{id}")
-    public void deleteGame(@ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") String leagueId,
+    public void deleteGame(@ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") ObjectId leagueId,
                            @ApiParam(required = true, value = "ID of the player being deleted") @PathParam("id") ObjectId id) {
         //Need to decide on how the model works with regards to league being parent or not
         playerService.deletePlayer(id);
