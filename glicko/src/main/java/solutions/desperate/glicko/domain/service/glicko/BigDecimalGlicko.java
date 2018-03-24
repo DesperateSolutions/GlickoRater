@@ -50,7 +50,8 @@ public class BigDecimalGlicko implements Glicko {
 
     private static BigDecimal f(BigDecimal x, BigDecimal delta, BigDecimal rd, BigDecimal v, BigDecimal a) {
         return (exp(x).multiply(delta.pow(2).subtract(rd.pow(2).subtract(v).subtract(exp(x))))
-                .divide(TWO.multiply(rd.pow(2).add(v).add(exp(x)).pow(2)), PRECISION)).subtract(x.subtract(a).divide(DEFAULT_TAU.pow(2), PRECISION));
+                      .divide(TWO.multiply(rd.pow(2).add(v).add(exp(x)).pow(2)), PRECISION))
+                .subtract(x.subtract(a).divide(DEFAULT_TAU.pow(2), PRECISION));
     }
 
     //Step 5
@@ -101,7 +102,8 @@ public class BigDecimalGlicko implements Glicko {
 
     //Step 7
     private static BigDecimal rdMarked(BigDecimal rdStarred, BigDecimal v) {
-        return ONE.divide(sqrt(ONE.divide(rdStarred.pow(2), PRECISION).add(ONE.divide(v, PRECISION)), PRECISION), PRECISION);
+        return ONE.divide(sqrt(ONE.divide(rdStarred.pow(2), PRECISION).add(ONE.divide(v, PRECISION)), PRECISION),
+                          PRECISION);
     }
 
     private static BigDecimal ratingMarked(BigDecimal rating, BigDecimal rdMarked, BigDecimal g, double result, BigDecimal e) {
@@ -109,21 +111,23 @@ public class BigDecimalGlicko implements Glicko {
     }
 
     public Player noGamesRd(Player player) {
-        BigDecimal rd = player.rd();
-        BigDecimal volatility = player.volatility();
-        return new Player(player.name(), player.rating(), SCALE.multiply(preRatingRd(convertRdToGlicko2(rd), volatility)), player.volatility());
+        BigDecimal rd = new BigDecimal(player.rd());
+        BigDecimal volatility = new BigDecimal(player.volatility());
+        return new Player(player.name(), player.rating(),
+                          SCALE.multiply(preRatingRd(convertRdToGlicko2(rd), volatility)).toPlainString(),
+                          player.volatility());
     }
 
     public Player defaultPlayer(String name) {
-        return new Player(name, DEFAULT_RATING, DEFAULT_RD, DEFAULT_VOLATILITY);
+        return new Player(name, DEFAULT_RATING.toPlainString(), DEFAULT_RD.toPlainString(), DEFAULT_VOLATILITY.toPlainString());
     }
 
     public Player glicko2(Player player1, Player player2, double result) {
         //Step 2
-        BigDecimal player1Rating = convertRatingToGlicko2(player1.rating());
-        BigDecimal player1Rd = convertRdToGlicko2(player1.rd());
-        BigDecimal player2Rating = convertRatingToGlicko2(player2.rating());
-        BigDecimal player2Rd = convertRdToGlicko2(player2.rd());
+        BigDecimal player1Rating = convertRatingToGlicko2(new BigDecimal(player1.rating()));
+        BigDecimal player1Rd = convertRdToGlicko2(new BigDecimal(player1.rd()));
+        BigDecimal player2Rating = convertRatingToGlicko2(new BigDecimal(player2.rating()));
+        BigDecimal player2Rd = convertRdToGlicko2(new BigDecimal(player2.rd()));
         //Step 3
         BigDecimal g = volatilityG(player2Rd);
         BigDecimal e = volatilityE(player1Rating, player2Rating, g);
@@ -131,13 +135,18 @@ public class BigDecimalGlicko implements Glicko {
         //Step 4
         BigDecimal delta = delta(e, g, variance, result);
         //Step 5
-        BigDecimal volatilityMarked = volatilityMarked(delta, player1Rd, player1.volatility(), variance);
+        BigDecimal volatilityMarked = volatilityMarked(delta, player1Rd, new BigDecimal(player1.volatility()), variance);
         //Step 6
         BigDecimal rdStarred = preRatingRd(player1Rd, volatilityMarked);
         //Step 7
         BigDecimal rdMarked = rdMarked(rdStarred, variance);
         BigDecimal ratingMarked = ratingMarked(player1Rating, rdMarked, g, result, e);
         //Step 8
-        return new Player(player1.name(), DEFAULT_RATING.add(SCALE.multiply(ratingMarked)), SCALE.multiply(rdMarked), volatilityMarked);
+        return new Player(player1.id(),
+                          player1.name(),
+                          DEFAULT_RATING.add(SCALE.multiply(ratingMarked)).toPlainString(),
+                          SCALE.multiply(rdMarked).toPlainString(),
+                          volatilityMarked.toPlainString(),
+                          player1.games());
     }
 }

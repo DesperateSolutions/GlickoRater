@@ -1,7 +1,9 @@
 package solutions.desperate.glicko.domain.service;
 
 import org.bson.types.ObjectId;
+import solutions.desperate.glicko.domain.model.Game;
 import solutions.desperate.glicko.domain.model.League;
+import solutions.desperate.glicko.domain.model.Player;
 import solutions.desperate.glicko.infrastructure.MongoDb;
 
 import javax.inject.Inject;
@@ -20,7 +22,7 @@ public class LeagueService {
     }
 
     public Stream<League> getAllLeagues() {
-        return mongoDb.getList(League.class);
+        return mongoDb.getStream(League.class);
     }
 
     public League getLeague(ObjectId id) {
@@ -34,4 +36,19 @@ public class LeagueService {
     public void deleteLeague(ObjectId id) {
         mongoDb.delete(League.class, id);
     }
+
+    //TODO instead of fetching the whole object update the list inside mongo
+    public void addPlayerToLeague(Player player, ObjectId leagueId) {
+        League league = getLeague(leagueId);
+        league.addPlayer(player);
+        mongoDb.store(league);
+    }
+
+    //TODO instead of fetching the whole object update the list inside mongo
+    public void addGameToLeague(Game game, ObjectId leagueId) {
+        League league = getLeague(leagueId);
+        league.addGame(game);
+        mongoDb.store(league);
+    }
+
 }
