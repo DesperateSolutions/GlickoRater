@@ -3,6 +3,7 @@ package solutions.desperate.glicko.api;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.Authorization;
 import org.bson.types.ObjectId;
 import solutions.desperate.glicko.api.command.GameCommand;
 import solutions.desperate.glicko.api.view.GameView;
@@ -25,21 +26,25 @@ public class GameApi {
         this.gameService = gameService;
     }
 
-    @ApiOperation(value = "Add a game to a league")
+    @ApiOperation(value = "Add a game to a league", authorizations = @Authorization("bearer"))
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public void addGame(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") ObjectId leagueId, GameCommand game) {
+    public void addGame(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization,
+                        @ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") ObjectId leagueId,
+                        GameCommand game) {
         if (!game.isValid()) {
             throw new BadRequestException("Invalid input");
         }
         gameService.addGame(Game.fromCommand(game), leagueId);
     }
 
-    @ApiOperation(value = "Add mutliple games to a league")
+    @ApiOperation(value = "Add mutliple games to a league", authorizations = @Authorization("bearer"))
     @POST
     @Path("batch")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void addGames(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") ObjectId leagueId, List<GameCommand> game) {
+    public void addGames(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization,
+                         @ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") ObjectId leagueId,
+                         List<GameCommand> game) {
         game.forEach(g -> {
             if (g.isValid()) {
                 throw new BadRequestException("Invalid input");
@@ -64,10 +69,11 @@ public class GameApi {
         return GameView.fromDomain(gameService.game(id));
     }
 
-    @ApiOperation(value = "Delete a game from a league. Important to note that currently this does not roll back the rating")
+    @ApiOperation(value = "Delete a game from a league. Important to note that currently this does not roll back the rating", authorizations = @Authorization("bearer"))
     @DELETE
     @Path("{id}")
-    public void deleteGame(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") ObjectId leagueId,
+    public void deleteGame(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization,
+                           @ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") ObjectId leagueId,
                            @ApiParam(required = true, value = "ID of the game being deleted") @PathParam("id") ObjectId id) {
         gameService.delete(id);
     }

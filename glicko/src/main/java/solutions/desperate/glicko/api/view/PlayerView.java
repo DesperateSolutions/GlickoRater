@@ -8,12 +8,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PlayerView {
-    public ObjectId id;
-    public String name;
-    public Double rating;
-    public Double ratingDeviation;
-    public Double volatility;
-    public List<ObjectId> games;
+    public final ObjectId id;
+    public final String name;
+    public final Double rating;
+    public final Double ratingDeviation;
+    public final Double volatility;
+    public final List<ObjectId> games;
 
     private PlayerView(ObjectId id, String name, double rating, double ratingDeviation, double volatility, List<ObjectId> games) {
         this.id = id;
