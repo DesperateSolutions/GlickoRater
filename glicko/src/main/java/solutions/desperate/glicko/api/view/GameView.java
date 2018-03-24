@@ -3,10 +3,6 @@ package solutions.desperate.glicko.api.view;
 import org.bson.types.ObjectId;
 import solutions.desperate.glicko.domain.model.Game;
 
-import java.beans.Transient;
-import java.util.Objects;
-import java.util.stream.Stream;
-
 public class GameView {
     public ObjectId id;
     public ObjectId whiteId;

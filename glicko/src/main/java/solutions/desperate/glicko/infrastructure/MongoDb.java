@@ -1,6 +1,7 @@
 package solutions.desperate.glicko.infrastructure;
 
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
@@ -15,8 +16,8 @@ public class MongoDb {
     private final Datastore datastore;
 
     @Inject
-    public MongoDb(String modelPackage) {
-        MongoClient mongoClient = new MongoClient("docker", 27017);
+    public MongoDb(Config config, String modelPackage) {
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(config.dbAddress));
         Morphia morphia = new Morphia();
         morphia.mapPackage(modelPackage);
         datastore = morphia.createDatastore(mongoClient, "glicko");

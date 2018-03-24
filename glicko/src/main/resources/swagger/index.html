@@ -72,7 +72,7 @@
 <script>
 window.onload = function() {
   var url = window.location.href;
-  url = url.replace("doc", "swagger.json");
+  url = url.replace("/doc/", "/swagger.json");
 
   // Build a system
   const ui = SwaggerUIBundle({

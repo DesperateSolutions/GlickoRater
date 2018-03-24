@@ -44,8 +44,14 @@ dependencies {
 
 }
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'solutions.desperate.glicko.Main'
+    }
+}
+
 shadowJar {
-    baseName = 'glickoRater'
+    baseName = 'glicko-rater'
     classifier = null
     version = 1.0
 }
