@@ -1,11 +1,18 @@
 package solutions.desperate.glicko.domain.model;
 
-public class Settings {
-    private final boolean drawAllowed;
-    private final int periodLength;
-    private final boolean scoredResults;
+import org.mongodb.morphia.annotations.Embedded;
+import solutions.desperate.glicko.api.dto.SettingsDto;
 
-    public Settings(boolean drawAllowed, int periodLength, boolean scoredResults) {
+@Embedded
+public class Settings {
+    private boolean drawAllowed;
+    private int periodLength;
+    private boolean scoredResults;
+
+    private Settings() {
+    }
+
+    private Settings(boolean drawAllowed, int periodLength, boolean scoredResults) {
         this.drawAllowed = drawAllowed;
         this.periodLength = periodLength;
         this.scoredResults = scoredResults;
@@ -21,5 +28,9 @@ public class Settings {
 
     public boolean scoredResults() {
         return scoredResults;
+    }
+
+    public static Settings fromDto(SettingsDto settingsDto) {
+        return new Settings(settingsDto.drawAllowed, settingsDto.periodLength, settingsDto.scoredResults);
     }
 }

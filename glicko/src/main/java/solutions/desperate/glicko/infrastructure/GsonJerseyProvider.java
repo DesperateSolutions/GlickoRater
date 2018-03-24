@@ -36,7 +36,7 @@ public class GsonJerseyProvider implements MessageBodyWriter<Object>,
                            MultivaluedMap<String, String> httpHeaders, InputStream entityStream)
             throws IOException {
         try (InputStreamReader streamReader = new InputStreamReader(entityStream, UTF_8)) {
-            return GlickoGson.glickoGson.fromJson(streamReader, genericType);
+            return GlickoGson.gson.fromJson(streamReader, genericType);
         } catch (com.google.gson.JsonSyntaxException e) {
             logger.debug("Failed to read JSON in Jersey", e);
         }
@@ -61,7 +61,7 @@ public class GsonJerseyProvider implements MessageBodyWriter<Object>,
                         MultivaluedMap<String, Object> httpHeaders,
                         OutputStream entityStream) throws IOException, WebApplicationException {
         try (OutputStreamWriter writer = new OutputStreamWriter(entityStream, UTF_8)) {
-            GlickoGson.glickoGson.toJson(object, genericType, writer);
+            GlickoGson.gson.toJson(object, genericType, writer);
         }
     }
 }

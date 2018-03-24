@@ -1,31 +1,32 @@
 package solutions.desperate.glicko.domain.model;
 
-import org.bson.BsonObjectId;
+import org.bson.types.ObjectId;
+import org.mongodb.morphia.annotations.Id;
+import solutions.desperate.glicko.api.command.GameCommand;
 
 public class Game {
-    private final BsonObjectId id;
-    private final String white;
-    private final String black;
+    @Id
+    private final ObjectId _id;
+    private final ObjectId white;
+    private final ObjectId black;
     private final String result;
-    private final String added;
 
-    public Game(BsonObjectId id, String white, String black, String result, String added) {
-        this.id = id;
+    private Game(ObjectId id, ObjectId white, ObjectId black, String result) {
+        this._id = id;
         this.white = white;
         this.black = black;
         this.result = result;
-        this.added = added;
     }
 
-    public BsonObjectId id() {
-        return id;
+    public ObjectId id() {
+        return _id;
     }
 
-    public String white() {
+    public ObjectId white() {
         return white;
     }
 
-    public String black() {
+    public ObjectId black() {
         return black;
     }
 
@@ -33,7 +34,7 @@ public class Game {
         return result;
     }
 
-    public String added() {
-        return added;
+    public static Game fromCommand(GameCommand gameCommand) {
+        return new Game(ObjectId.get(), gameCommand.whiteId, gameCommand.blackId, gameCommand.result);
     }
 }

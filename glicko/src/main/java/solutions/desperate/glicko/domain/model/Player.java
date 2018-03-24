@@ -1,14 +1,24 @@
 package solutions.desperate.glicko.domain.model;
 
+import org.bson.types.ObjectId;
+import org.mongodb.morphia.annotations.Id;
+
 import java.math.BigDecimal;
 
 public class Player {
-    private final String name;
-    private final BigDecimal rating;
-    private final BigDecimal rd;
-    private final BigDecimal volatility;
+    @Id
+    private ObjectId _id;
+    private String name;
+    private BigDecimal rating;
+    private BigDecimal rd;
+    private BigDecimal volatility;
+
+    private Player() {
+        //Morphia
+    }
 
     public Player(String name, BigDecimal rating, BigDecimal rd, BigDecimal volatility) {
+        this._id = ObjectId.get();
         this.name = name;
         this.rating = rating;
         this.rd = rd;
@@ -29,5 +39,9 @@ public class Player {
 
     public String name() {
         return name;
+    }
+
+    public ObjectId id() {
+        return _id;
     }
 }

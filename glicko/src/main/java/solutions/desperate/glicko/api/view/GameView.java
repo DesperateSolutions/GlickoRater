@@ -1,20 +1,16 @@
-package solutions.desperate.glicko.api.dto;
+package solutions.desperate.glicko.api.view;
 
-import io.swagger.annotations.ApiModelProperty;
+import org.bson.types.ObjectId;
 
 import java.beans.Transient;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public class GameDto {
-    @ApiModelProperty(required = true)
+public class GameView {
+    public ObjectId id;
     public String whiteId;
-    @ApiModelProperty(required = true)
     public String blackId;
-    @ApiModelProperty(required = true)
     public String result;
-    //TODO find out what added is
-    public String added;
 
     @Transient
     public boolean isValid() {
