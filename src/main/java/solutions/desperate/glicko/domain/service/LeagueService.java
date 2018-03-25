@@ -4,9 +4,12 @@ import org.bson.types.ObjectId;
 import solutions.desperate.glicko.domain.model.Game;
 import solutions.desperate.glicko.domain.model.League;
 import solutions.desperate.glicko.domain.model.Player;
+import solutions.desperate.glicko.domain.model.Settings;
 import solutions.desperate.glicko.infrastructure.MongoDb;
 
 import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class LeagueService {
@@ -29,8 +32,11 @@ public class LeagueService {
         return mongoDb.getObjectById(League.class, id);
     }
 
-    public void updateLeague(League league) {
-        mongoDb.store(league);
+    public void updateLeague(ObjectId id, String name, Settings settings) {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("name", name);
+        updates.put("settings", settings);
+        mongoDb.updateFields(League.class, id, updates);
     }
 
     public void deleteLeague(ObjectId id) {

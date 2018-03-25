@@ -5,12 +5,14 @@ import com.mongodb.MongoClientURI;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
+import org.mongodb.morphia.query.UpdateOperations;
 import solutions.desperate.glicko.domain.model.Token;
 import solutions.desperate.glicko.domain.model.User;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
+import java.util.Map;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -21,6 +23,7 @@ public class MongoDb {
     @Inject
     public MongoDb(Config config, String modelPackage) {
         MongoClient mongoClient = new MongoClient(new MongoClientURI(config.dbAddress));
+        mongoClient.dropDatabase("glicko");
         Morphia morphia = new Morphia();
         morphia.mapPackage(modelPackage);
         datastore = morphia.createDatastore(mongoClient, "glicko");
@@ -54,6 +57,16 @@ public class MongoDb {
 
     public <T> void delete(Class<T> clazz, ObjectId id) {
         datastore.delete(clazz, id);
+    }
+
+    public <T> void updateFields(Class<T> clazz, ObjectId id, Map<String ,Object> updates) {
+        UpdateOperations<T> updateOperations = datastore.createUpdateOperations(clazz);
+        updates.forEach(updateOperations::set);
+        datastore.update(datastore.createQuery(clazz).field("_id").equal(id), updateOperations);
+    }
+
+    public <T> void updateSingleField(Class<T> clazz, ObjectId id, String field, Object value) {
+        datastore.update(datastore.createQuery(clazz).field("_id").equal(id), datastore.createUpdateOperations(clazz).set(field, value));
     }
 
     public <T> void upsert(Class<T> clazz, T entity, String field, Object value) {

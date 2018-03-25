@@ -12,7 +12,7 @@ public class GameCommand {
     public ObjectId whiteId;
     @ApiModelProperty(required = true)
     public ObjectId blackId;
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "Should be in the format X-X where X is the score of each player, with white being first")
     public String result;
 
     @Transient

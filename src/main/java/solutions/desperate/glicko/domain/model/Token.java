@@ -6,37 +6,34 @@ import org.mongodb.morphia.annotations.Field;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Index;
 import org.mongodb.morphia.annotations.IndexOptions;
+import org.mongodb.morphia.annotations.Indexed;
 import org.mongodb.morphia.annotations.Indexes;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Indexes({
-        @Index(fields = {@Field("username"), @Field("refresh")}, options = @IndexOptions(unique = true)),
-        @Index(fields = @Field("token"), options = @IndexOptions(unique = true, expireAfterSeconds = 3600))
-})
 public class Token {
     @Id
     private ObjectId _id;
+    @Indexed(options = @IndexOptions(unique = true))
     private String username;
+    @Indexed(options = @IndexOptions(unique = true))
     private UUID token;
-    private int expiry;
-    private UUID refresh;
+    @Indexed(options = @IndexOptions(expireAfterSeconds = 0))
+    private Date expiry;
 
     private Token() {
         //Morphia
     }
 
-    private Token(ObjectId id, String username, UUID token, int expiry, UUID refresh) {
+    private Token(ObjectId id, String username, UUID token, int expiry) {
         _id = id;
         this.username = username;
         this.token = token;
-        this.expiry = expiry;
-        this.refresh = refresh;
-    }
-
-    public int expiry() {
-        return expiry;
+        this.expiry = Date.from(Instant.now().plusSeconds(expiry));
     }
 
     public UUID token() {
@@ -47,15 +44,15 @@ public class Token {
         return _id;
     }
 
-    public UUID refresh() {
-        return refresh;
-    }
-
     public String username() {
         return username;
     }
 
+    public long expiry() {
+        return Duration.between(Instant.now(), expiry.toInstant()).getSeconds();
+    }
+
     public static Token createToken(String username, int expiry) {
-        return new Token(ObjectId.get(), username, UUID.randomUUID(), expiry, UUID.randomUUID());
+        return new Token(ObjectId.get(), username, UUID.randomUUID(), expiry);
     }
 }

@@ -22,12 +22,8 @@ public class PlayerService {
         leagueService.addPlayerToLeague(player, leagueId);
     }
 
-    public void updateName(String name, ObjectId id) {
-        //Make a query based name only update
-    }
-
-    public void updatePlayer(Player player) {
-        //update all but name??
+    public void updatePlayer(ObjectId id, String name) {
+        mongoDb.updateSingleField(Player.class, id, "name", name);
     }
 
     //TODO Make this update fields and not the whole objects
