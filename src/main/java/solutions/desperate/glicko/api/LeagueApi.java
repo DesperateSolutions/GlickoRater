@@ -10,6 +10,7 @@ import solutions.desperate.glicko.api.command.UpdateLeague;
 import solutions.desperate.glicko.api.dto.AuthHeader;
 import solutions.desperate.glicko.api.view.LeagueView;
 import solutions.desperate.glicko.domain.model.League;
+import solutions.desperate.glicko.domain.model.Settings;
 import solutions.desperate.glicko.domain.service.AuthService;
 import solutions.desperate.glicko.domain.service.LeagueService;
 
@@ -55,7 +56,7 @@ public class LeagueApi {
         if (league.isNotValid()) {
             throw new BadRequestException("Invalid league");
         }
-        throw new NotSupportedException("Not yet implemented");
+        leagueService.updateLeague(id, league.name, Settings.fromDto(league.settings));
     }
 
     @ApiOperation(value = "Lists all leagues")

@@ -14,8 +14,6 @@ public class UpdateLeague {
     public String name;
     @ApiModelProperty(required = true)
     public SettingsDto settings;
-    public List<ObjectId> players;
-    public List<ObjectId> games;
 
     @Transient
     public boolean isNotValid() {

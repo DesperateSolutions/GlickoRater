@@ -49,7 +49,7 @@ public class PlayerApi {
         if(player.isNotValid()) {
             throw new BadRequestException("Invalid player");
         }
-        throw new NotSupportedException("Not yet implemented");
+        playerService.updatePlayer(id, player.name);
     }
 
     @ApiOperation(value = "Lists all players from a league")
