@@ -41,7 +41,7 @@ public class PlayerService {
     }
 
     public Player player(ObjectId id) {
-        return mongoDb.getObject(Player.class, id);
+        return mongoDb.getObjectById(Player.class, id);
     }
 
     public void deletePlayer(ObjectId id) {

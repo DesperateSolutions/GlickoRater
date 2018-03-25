@@ -26,7 +26,7 @@ public class LeagueService {
     }
 
     public League getLeague(ObjectId id) {
-        return mongoDb.getObject(League.class, id);
+        return mongoDb.getObjectById(League.class, id);
     }
 
     public void updateLeague(League league) {

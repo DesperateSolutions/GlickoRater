@@ -37,7 +37,7 @@ public class GameService {
     }
 
     public Game game(ObjectId id) {
-        return mongoDb.getObject(Game.class, id);
+        return mongoDb.getObjectById(Game.class, id);
     }
 
     public Stream<Game> allGames() {
