@@ -7,24 +7,29 @@ import io.swagger.annotations.Authorization;
 import org.bson.types.ObjectId;
 import solutions.desperate.glicko.api.command.AddLeague;
 import solutions.desperate.glicko.api.command.UpdateLeague;
+import solutions.desperate.glicko.api.dto.AuthHeader;
 import solutions.desperate.glicko.api.view.LeagueView;
 import solutions.desperate.glicko.domain.model.League;
+import solutions.desperate.glicko.domain.service.AuthService;
 import solutions.desperate.glicko.domain.service.LeagueService;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Api("League API")
 @Path("league")
 public class LeagueApi {
     private final LeagueService leagueService;
+    private final AuthService authService;
 
     @Inject
-    public LeagueApi(LeagueService leagueService) {
+    public LeagueApi(LeagueService leagueService, AuthService authService) {
         this.leagueService = leagueService;
+        this.authService = authService;
     }
 
 
@@ -33,6 +38,7 @@ public class LeagueApi {
     @Consumes(MediaType.APPLICATION_JSON)
     public void addLeague(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization,
                           AddLeague league) {
+        authService.doAuth(AuthHeader.getAuthString(authorization));
         if (league.isNotValid()) {
             throw new BadRequestException("Invalid league");
         }
@@ -45,6 +51,7 @@ public class LeagueApi {
     @Consumes(MediaType.APPLICATION_JSON)
     public void updateLeague(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization,
                              @ApiParam(required = true, value = "ID of the league being updated") @PathParam("id") ObjectId id, UpdateLeague league) {
+        authService.doAuth(AuthHeader.getAuthString(authorization));
         if (league.isNotValid()) {
             throw new BadRequestException("Invalid league");
         }
@@ -71,6 +78,7 @@ public class LeagueApi {
     @Path("{id}")
     public void deleteLeague(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization,
                              @ApiParam(required = true, value = "ID of the league being deleted") @PathParam("id") ObjectId id) {
+        authService.doAuth(AuthHeader.getAuthString(authorization));
         leagueService.deleteLeague(id);
     }
 }

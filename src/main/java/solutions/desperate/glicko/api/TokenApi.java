@@ -13,6 +13,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.util.UUID;
 
 @Api(value = "Oauth2")
 @Path("token")
@@ -27,7 +28,9 @@ public class TokenApi {
     @ApiOperation(value = "Authorize user")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public TokenView token(@ApiParam(allowableValues = "password") @FormParam("grant_type") String grantType, @FormParam("username") String username, @FormParam("password") String password) {
+    public TokenView token(@ApiParam(allowableValues = "password") @FormParam("grant_type") String grantType,
+                           @FormParam("username") String username,
+                           @FormParam("password") String password) {
         if(!grantType.equals("password")) {
             //Make this into a correct error response type
             throw new BadRequestException("unsupported_grant_type");
@@ -39,7 +42,8 @@ public class TokenApi {
     @POST
     @Path("refresh")
     @Produces(MediaType.APPLICATION_JSON)
-    public TokenView refresh(@ApiParam(allowableValues = "refresh_token") @FormParam("grant_type") String grantType, @FormParam("refresh_token") String refreshToken) {
+    public TokenView refresh(@ApiParam(allowableValues = "refresh_token") @FormParam("grant_type") String grantType,
+                             @ApiParam(value = "UUID refresh token") @FormParam("refresh_token") UUID refreshToken) {
         if(!grantType.equals("refresh_token")) {
             //Make this into a correct error response type
             throw new BadRequestException("unsupported_grant_type");

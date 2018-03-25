@@ -21,7 +21,7 @@ public class User {
         //Morphia
     }
 
-    private User(ObjectId id, String username, String password) {
+    public User(ObjectId id, String username, String password) {
         this._Id = id;
         this.username = username;
         this.password = password;
