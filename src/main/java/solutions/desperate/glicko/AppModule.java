@@ -6,6 +6,7 @@ import solutions.desperate.glicko.domain.service.glicko.BigDecimalGlicko;
 import solutions.desperate.glicko.domain.service.glicko.Glicko;
 import solutions.desperate.glicko.infrastructure.Config;
 import solutions.desperate.glicko.infrastructure.MongoDb;
+import solutions.desperate.glicko.infrastructure.MongoDbImpl;
 
 public class AppModule extends AbstractModule {
     private final Config config;
@@ -23,7 +24,7 @@ public class AppModule extends AbstractModule {
 
     }
 
-    private MongoDb mongoDb() {
-        return new MongoDb(config, League.class.getPackage().getName());
+    private MongoDbImpl mongoDb() {
+        return new MongoDbImpl(config, League.class.getPackage().getName(), "glicko");
     }
 }

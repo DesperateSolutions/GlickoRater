@@ -307,7 +307,7 @@ public class Ifactor implements Cloneable, Comparable<Ifactor>
      */
     public Ifactor divide(final Ifactor oth)
     {
-        /* todo: it'd probably be faster to cancel the gcd(this,oth) first in the prime power
+        /*
          * representation, which would avoid a more strenous factorization of the integer ratio
          */
         return  new Ifactor(n.divide(oth.n)) ;
@@ -389,7 +389,7 @@ public class Ifactor implements Cloneable, Comparable<Ifactor>
                 if ( ex % r != 0 )
                     throw new ArithmeticException("Cannot pull "+ r+"th root of "+ toString()) ;
 
-                //TODO pows.multiply( new BigInteger(""+primeexp.elementAt(i)).pow(ex/r) ) ;
+                //
             }
             /* convert result to a Rational; unfortunately this will loose the prime factorization */
             return new Rational(pows) ;

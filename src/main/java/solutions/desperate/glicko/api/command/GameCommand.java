@@ -17,6 +17,6 @@ public class GameCommand {
 
     @Transient
     public boolean isValid() {
-        return Stream.of(whiteId, blackId, result).allMatch(Objects::nonNull);
+        return Stream.of(whiteId, blackId, result).allMatch(Objects::nonNull) && !whiteId.equals(blackId);
     }
 }
