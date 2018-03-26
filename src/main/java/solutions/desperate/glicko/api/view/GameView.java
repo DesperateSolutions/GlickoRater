@@ -17,7 +17,7 @@ public class GameView {
     }
 
     public static GameView fromDomain(Game game) {
-        //TODO fix the result view
+        //TODO fix the result string being shown
         return new GameView(game.id(), game.white(), game.black(), String.valueOf(game.result()));
     }
 

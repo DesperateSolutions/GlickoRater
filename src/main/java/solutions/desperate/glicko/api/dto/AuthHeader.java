@@ -9,6 +9,9 @@ import java.util.UUID;
 public class AuthHeader {
     private static final Logger logger = LoggerFactory.getLogger(AuthHeader.class);
     public static UUID getAuthString(String auth) {
+        if(auth == null || auth.isEmpty()) {
+            throw new NotAuthorizedException("Invalid auth");
+        }
         String[] s = auth.split(" ");
         if (s.length == 2) {
             if (s[0].equalsIgnoreCase("bearer")) {
