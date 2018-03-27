@@ -33,8 +33,12 @@ public class MongoDbImpl implements MongoDb {
     //TODO find a better way to make a default user in the system
     private void createDefaultUser(Config config) {
         if (getObjectByField(User.class, "username", config.defaultUser) == null) {
-            User user = new User(ObjectId.get(), config.defaultUser, config.defaultPass);
-            datastore.save(user);
+            try {
+                User user = new User(ObjectId.get(), config.defaultUser, CrackStationHashing.createHash(config.defaultPass));
+                datastore.save(user);
+            } catch (CrackStationHashing.CannotPerformOperationException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
