@@ -6,6 +6,7 @@ import solutions.desperate.glicko.api.dto.AuthHeader;
 import solutions.desperate.glicko.api.view.TokenView;
 import solutions.desperate.glicko.domain.model.Token;
 import solutions.desperate.glicko.domain.model.User;
+import solutions.desperate.glicko.infrastructure.CrackStationHashing;
 import solutions.desperate.glicko.infrastructure.MongoDb;
 
 import javax.inject.Inject;
@@ -24,12 +25,16 @@ public class AuthService {
 
     public TokenView doLogin(String username, String password) {
         User user = mongoDb.getObjectByField(User.class, "username", username);
-        if(user != null && password.equals(user.password())) {
-            Token token = Token.createToken(username, 3600);
-            mongoDb.store(token);
-            return TokenView.fromDomain(token);
+        try {
+            if (user != null && CrackStationHashing.verifyPassword(password, user.password())) {
+                Token token = Token.createToken(username, 3600);
+                mongoDb.store(token);
+                return TokenView.fromDomain(token);
+            }
+            throw new NotAuthorizedException("Failed auth");
+        } catch (CrackStationHashing.InvalidHashException | CrackStationHashing.CannotPerformOperationException e) {
+            throw new NotAuthorizedException("Failed auth");
         }
-        throw new NotAuthorizedException("Failed auth");
     }
 
     public void doAuth(UUID token) {

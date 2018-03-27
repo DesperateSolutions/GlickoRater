@@ -8,6 +8,7 @@ import org.mongodb.morphia.annotations.Index;
 import org.mongodb.morphia.annotations.IndexOptions;
 import org.mongodb.morphia.annotations.Indexes;
 import solutions.desperate.glicko.api.dto.UserDto;
+import solutions.desperate.glicko.infrastructure.CrackStationHashing;
 
 @Entity
 @Indexes(@Index(fields = @Field("username"), options = @IndexOptions(unique = true)))
@@ -40,7 +41,11 @@ public class User {
     }
 
     public static User fromDto(UserDto user) {
-        //Todo encrypt the password
-        return new User(ObjectId.get(), user.username, user.password);
+        try {
+            return new User(ObjectId.get(), user.username, CrackStationHashing.createHash(user.password));
+        } catch (CrackStationHashing.CannotPerformOperationException e) {
+            //Handle error
+            throw new RuntimeException(e);
+        }
     }
 }

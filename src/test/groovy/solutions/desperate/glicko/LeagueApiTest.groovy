@@ -10,7 +10,7 @@ class LeagueApiTest extends GlickoTestApp {
         when:
         def league1 = makeLeague("league1")
         def league2 = makeLeague("league2")
-        def league3 = makeLeague("league4")
+        def league3 = makeLeague("league3")
         Response response1 = client.httpPost("/league", league1)
         Response response2 = client.httpPost("/league", league2)
         Response response3 = client.httpPost("/league", league3)
@@ -31,7 +31,7 @@ class LeagueApiTest extends GlickoTestApp {
 
         then:
         result.size() == 3
-        result.find { it.name == "league1" || it.name == "league2" || it.name == "league3" }
+        result.forEach { assert (it.name == "league1" || it.name == "league2" || it.name == "league3")}
     }
 
 
