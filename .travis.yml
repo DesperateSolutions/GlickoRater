@@ -9,5 +9,4 @@ services:
   - docker
   - mongodb
 
-script:
-  - ./gradlew clean shadowJar
+script: bash travis_build.sh

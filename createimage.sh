@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -e
 
 ./gradlew shadowJar
-cp build/libs/glicko-rater-1.0.jar docker/
 
-docker build --tag glickorater docker/
+docker build --tag desp/glickorater:local .
