@@ -43,21 +43,4 @@ public class AuthService {
             throw new NotAuthorizedException("Not authorized");
         }
     }
-
-    public TokenView refresh(UUID refreshToken) {
-        Token oldToken;
-        try {
-            oldToken = mongoDb.getObjectByField(Token.class, "refresh", refreshToken.toString());
-        } catch (NullPointerException e) {
-            throw new NotAuthorizedException("Not authorized");
-        }
-        Token newToken = Token.createToken(oldToken.username(), 3600);
-        storeToken(newToken);
-        return TokenView.fromDomain(newToken);
-    }
-
-    private void storeToken(Token token) {
-        mongoDb.upsert(Token.class, token, "username", token.username());
-
-    }
 }

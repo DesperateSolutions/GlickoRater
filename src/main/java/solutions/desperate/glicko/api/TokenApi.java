@@ -37,17 +37,4 @@ public class TokenApi {
         }
         return authService.doLogin(username, password);
     }
-
-    @ApiOperation(value = "Refresh token")
-    @POST
-    @Path("refresh")
-    @Produces(MediaType.APPLICATION_JSON)
-    public TokenView refresh(@ApiParam(allowableValues = "refresh_token") @FormParam("grant_type") String grantType,
-                             @ApiParam(value = "UUID refresh token") @FormParam("refresh_token") UUID refreshToken) {
-        if(!grantType.equals("refresh_token")) {
-            //Make this into a correct error response type
-            throw new BadRequestException("unsupported_grant_type");
-        }
-        return authService.refresh(refreshToken);
-    }
 }
