@@ -1,5 +1,6 @@
 package solutions.desperate.glicko.infrastructure;
 
+import java.net.URI;
 import java.util.Optional;
 
 public class Config {
@@ -7,6 +8,7 @@ public class Config {
     public final int port;
     public final String defaultUser;
     public final String defaultPass;
+    public final URI baseAddess;
 
     //Might want a better way to start the app with. Port is there for the tests
     public Config(int port){
@@ -23,5 +25,6 @@ public class Config {
         this.port = Optional.ofNullable(System.getenv("GLICKO_PORT")).map(Integer::parseInt).orElse(port);
         defaultUser = Optional.ofNullable(System.getenv("GLICKO_USER")).orElse("default");//.orElseThrow(() -> new RuntimeException("No default user supplied"));
         defaultPass = Optional.ofNullable(System.getenv("GLICKO_PASS")).orElse("default");//.orElseThrow(() -> new RuntimeException("No default pass supplied"));
+        baseAddess = Optional.ofNullable(System.getenv("GLICKO_ADDR")).map(URI::create).orElse(URI.create("http://localhost:3000"));
     }
 }

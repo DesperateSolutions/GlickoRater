@@ -3,25 +3,31 @@ package solutions.desperate.glicko.api;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Swagger;
 import io.swagger.models.auth.OAuth2Definition;
+import solutions.desperate.glicko.infrastructure.Config;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.net.URI;
 
 @Path("swagger.json")
 public class SwaggerApi {
     private static final String resourcePackage = SwaggerApi.class.getPackage().getName();
     private final Swagger swagger;
+    private final URI baseAddr;
 
-    public SwaggerApi() {
+    @Inject
+    public SwaggerApi(Config config) {
+        this.baseAddr = config.baseAddess;
         this.swagger = initSwagger();
     }
 
     @Produces(MediaType.APPLICATION_JSON)
     @GET
     public Swagger swagger() {
-        swagger.addSecurityDefinition("bearer", new OAuth2Definition().password("http://localhost:3000/token"));
+        swagger.addSecurityDefinition("bearer", new OAuth2Definition().password(baseAddr.toString() + "/token"));
         return swagger;
     }
 
