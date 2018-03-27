@@ -28,7 +28,7 @@ public class AuthService {
         try {
             if (user != null && CrackStationHashing.verifyPassword(password, user.password())) {
                 Token token = Token.createToken(username, 3600);
-                mongoDb.store(token);
+                mongoDb.upsert(Token.class, token, "token", token.token());
                 return TokenView.fromDomain(token);
             }
             throw new NotAuthorizedException("Failed auth");
