@@ -8,6 +8,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -17,6 +18,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.EncodingFilter;
 import org.glassfish.jersey.servlet.ServletContainer;
 import solutions.desperate.glicko.api.*;
+import solutions.desperate.glicko.infrastructure.AccessLog;
 import solutions.desperate.glicko.infrastructure.GsonJerseyProvider;
 import solutions.desperate.glicko.infrastructure.HeaderFilter;
 
@@ -42,7 +44,9 @@ public class ApiStarter {
     public Server init(int port) {
         Server server = new Server(threadPool());
         server.setStopAtShutdown(true);
-        server.setHandler(apiHandler());
+        HandlerList handlerList = new HandlerList();
+        handlerList.setHandlers(new Handler[]{accessLog(), apiHandler()});
+        server.setHandler(handlerList);
         server.addConnector(serverConnector(server, port));
         removeVersionTag(server);
         return server;
@@ -114,5 +118,11 @@ public class ApiStarter {
         EncodingFilter.enableFor(resourceConfig);
 
         return resourceConfig;
+    }
+
+    private RequestLogHandler accessLog() {
+        RequestLogHandler accessLogs = new RequestLogHandler();
+        accessLogs.setRequestLog(new AccessLog());
+        return accessLogs;
     }
 }
