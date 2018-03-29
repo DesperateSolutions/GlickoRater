@@ -8,6 +8,7 @@ import solutions.desperate.glicko.domain.service.AuthService;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -28,6 +29,7 @@ public class TokenApi {
     @ApiOperation(value = "Authorize user")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public TokenView token(@ApiParam(allowableValues = "password") @FormParam("grant_type") String grantType,
                            @FormParam("username") String username,
                            @FormParam("password") String password) {

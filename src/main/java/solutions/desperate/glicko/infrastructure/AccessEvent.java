@@ -1,7 +1,5 @@
 package solutions.desperate.glicko.infrastructure;
 
-import java.time.Instant;
-
 public class AccessEvent {
     private final String queryString;
     private final String requestURI;
