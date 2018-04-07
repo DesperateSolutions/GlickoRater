@@ -22,7 +22,8 @@ class GlickoTestApp extends Specification {
     def setupSpec() {
         int port = new Random().nextInt(10000) + 10000
         client = new Client(port)
-        Map<String, String> configMap = System.getenv()
+        Map<String, String> configMap = new HashMap<>()
+        configMap.putAll(System.getenv())
         configMap.put("GLICKO_PORT", port.toString())
         configMap.put("GLICKO_USER", "test_user")
         configMap.put("GLICKO_PASS", "test_pass")
