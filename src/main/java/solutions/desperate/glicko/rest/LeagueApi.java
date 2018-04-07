@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Api("League API")
@@ -55,6 +56,7 @@ public class LeagueApi {
         if (league.isNotValid()) {
             throw new BadRequestException("Invalid league");
         }
+        Optional.ofNullable(leagueService.getLeague(id)).orElseThrow(() -> new NotFoundException("No such league"));
         leagueService.updateLeague(id, league.name, Settings.fromDto(league.settings));
     }
 
@@ -70,7 +72,7 @@ public class LeagueApi {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public LeagueView league(@ApiParam(required = true, value = "ID of the league being fetched") @PathParam("id") ObjectId id) {
-        return LeagueView.fromDomain(leagueService.getLeague(id));
+        return LeagueView.fromDomain(Optional.ofNullable(leagueService.getLeague(id)).orElseThrow(() -> new NotFoundException("No such league")));
     }
 
     @ApiOperation(value = "Delete a league", authorizations = @Authorization("bearer"))

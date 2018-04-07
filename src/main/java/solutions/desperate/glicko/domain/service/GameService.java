@@ -2,11 +2,14 @@ package solutions.desperate.glicko.domain.service;
 
 import org.bson.types.ObjectId;
 import solutions.desperate.glicko.domain.model.Game;
+import solutions.desperate.glicko.domain.model.League;
 import solutions.desperate.glicko.domain.model.Player;
+import solutions.desperate.glicko.domain.model.Settings;
 import solutions.desperate.glicko.domain.service.glicko.Glicko;
 import solutions.desperate.glicko.infrastructure.MongoDb;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import java.util.stream.Stream;
 
 public class GameService {
@@ -24,6 +27,11 @@ public class GameService {
     }
 
     public void addGame(Game game, ObjectId league) {
+        //Todo just fetch the settings directly, not like this
+        Settings settings = mongoDb.getObjectById(League.class, league).settings();
+        if(game.result() == 0 && !settings.drawAllowed()) {
+            throw new BadRequestException("Draws are not allowed");
+        }
         Player white = playerService.player(game.white());
         Player black = playerService.player(game.black());
         Player updatedWhite = glicko.glicko2(white, black, game.result() == 1 ? 1.0 : game.result() == 0 ? 0.5 : 0.0);

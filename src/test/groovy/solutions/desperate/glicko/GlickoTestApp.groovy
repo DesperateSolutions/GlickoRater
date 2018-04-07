@@ -1,5 +1,6 @@
 package solutions.desperate.glicko
 
+import com.google.common.collect.ImmutableMap
 import com.google.inject.Guice
 import com.google.inject.Injector
 import okhttp3.OkHttpClient
@@ -22,7 +23,11 @@ class GlickoTestApp extends Specification {
     def setupSpec() {
         int port = new Random().nextInt(10000) + 10000
         client = new Client(port)
-        Injector injector = Guice.createInjector(new AppTestModule(new Config(port)))
+        HashMap<String, String> configMap = new HashMap<>();
+        configMap.put("GLICKO_PORT", port.toString())
+        configMap.put("GLICKO_USER", "test_user")
+        configMap.put("GLICKO_PASS", "test_pass");
+        Injector injector = Guice.createInjector(new AppTestModule(new Config(configMap)))
         app = injector.getInstance(GlickoApp.class)
         mongoDb = (MockMongo) injector.getInstance(MongoDb.class)
         app.startApp()
@@ -58,6 +63,15 @@ class GlickoTestApp extends Specification {
             Request request = new Request.Builder()
                     .addHeader("authorization", "bearer " + accessToken.toString())
                     .post(RequestBody.create(okhttp3.MediaType.parse(MediaType.APPLICATION_JSON), body))
+                    .url(baseUrl + path)
+                    .build()
+            client.newCall(request).execute()
+        }
+
+        def httpDelete(String path) {
+            Request request = new Request.Builder()
+                    .addHeader("authorization", "bearer " + accessToken.toString())
+                    .delete()
                     .url(baseUrl + path)
                     .build()
             client.newCall(request).execute()

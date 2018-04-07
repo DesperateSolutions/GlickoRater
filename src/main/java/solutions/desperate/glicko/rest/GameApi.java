@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Api("Game API")
@@ -38,7 +39,7 @@ public class GameApi {
         gameService.addGame(Game.fromCommand(game), leagueId);
     }
 
-    @ApiOperation(value = "Add mutliple games to a league", authorizations = @Authorization("bearer"))
+    @ApiOperation(value = "Add mutliple games to a league, the order of games is sensitive", authorizations = @Authorization("bearer"))
     @POST
     @Path("batch")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -66,7 +67,7 @@ public class GameApi {
     @Produces(MediaType.APPLICATION_JSON)
     public GameView game(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") ObjectId leagueId,
                         @ApiParam(required = true, value = "ID of the game being fetched") @PathParam("id") ObjectId id) {
-        return GameView.fromDomain(gameService.game(id));
+        return GameView.fromDomain(Optional.ofNullable(gameService.game(id)).orElseThrow(() -> new NotFoundException("No such game")));
     }
 
     @ApiOperation(value = "Delete a game from a league. Important to note that currently this does not roll back the rating", authorizations = @Authorization("bearer"))

@@ -1,9 +1,10 @@
 package solutions.desperate.glicko
 
-import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import okhttp3.Response
 import solutions.desperate.glicko.domain.model.League
+
+import static solutions.desperate.glicko.TestData.makeLeague
 
 class LeagueApiTest extends GlickoTestApp {
     def "Can create multiple leagues and get them"() {
@@ -34,15 +35,20 @@ class LeagueApiTest extends GlickoTestApp {
         result.forEach { assert (it.name == "league1" || it.name == "league2" || it.name == "league3")}
     }
 
+    def "Can delete a league"() {
+        expect:
+        client.httpPost("/league", makeLeague("league1")).code() == 204
+        Response allLeagues = client.httpGet("/league")
+        allLeagues.code() == 200
+        def league = new JsonSlurper().parse(allLeagues.body().byteStream()).find {it.name == "league1"}
 
-    def makeLeague(String name = "defaultName") {
-        new JsonBuilder([
-                name    : name,
-                settings: [
-                        drawAllowed  : true,
-                        periodLength : 30,
-                        scoredResults: true
-                ]
-        ]).toString()
+        when:
+        Response response = client.httpDelete("/league/${league.id}")
+
+        then:
+        response.code() == 204
+
+        and:
+        client.httpGet("/league/${league.id}").code() == 404
     }
 }

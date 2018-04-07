@@ -7,7 +7,7 @@ import solutions.desperate.glicko.infrastructure.Config;
 
 public class Main {
     public static void main(String[] args) {
-        Injector injector = Guice.createInjector(new AppModule(new Config(3000)));
+        Injector injector = Guice.createInjector(new AppModule(new Config(System.getenv())));
         GlickoApp app = injector.getInstance(GlickoApp.class);
         app.startApp();
         app.join();
