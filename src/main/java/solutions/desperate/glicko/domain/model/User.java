@@ -7,7 +7,7 @@ import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Index;
 import org.mongodb.morphia.annotations.IndexOptions;
 import org.mongodb.morphia.annotations.Indexes;
-import solutions.desperate.glicko.api.dto.UserDto;
+import solutions.desperate.glicko.rest.dto.UserDto;
 import solutions.desperate.glicko.infrastructure.CrackStationHashing;
 
 @Entity

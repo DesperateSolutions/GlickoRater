@@ -1,4 +1,4 @@
-package solutions.desperate.glicko.api.view;
+package solutions.desperate.glicko.rest.view;
 
 import solutions.desperate.glicko.domain.model.Token;
 

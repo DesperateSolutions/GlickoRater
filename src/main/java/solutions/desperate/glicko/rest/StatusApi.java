@@ -1,4 +1,4 @@
-package solutions.desperate.glicko.api;
+package solutions.desperate.glicko.rest;
 
 import io.swagger.annotations.Api;
 
@@ -7,7 +7,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-@Api("Status api")
+@Api("Status rest")
 @Path("status")
 public class StatusApi {
 

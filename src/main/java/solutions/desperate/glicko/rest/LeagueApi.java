@@ -1,14 +1,14 @@
-package solutions.desperate.glicko.api;
+package solutions.desperate.glicko.rest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import org.bson.types.ObjectId;
-import solutions.desperate.glicko.api.command.AddLeague;
-import solutions.desperate.glicko.api.command.UpdateLeague;
-import solutions.desperate.glicko.api.dto.AuthHeader;
-import solutions.desperate.glicko.api.view.LeagueView;
+import solutions.desperate.glicko.rest.command.AddLeague;
+import solutions.desperate.glicko.rest.command.UpdateLeague;
+import solutions.desperate.glicko.rest.dto.AuthHeader;
+import solutions.desperate.glicko.rest.view.LeagueView;
 import solutions.desperate.glicko.domain.model.League;
 import solutions.desperate.glicko.domain.model.Settings;
 import solutions.desperate.glicko.domain.service.AuthService;
@@ -18,7 +18,6 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Api("League API")

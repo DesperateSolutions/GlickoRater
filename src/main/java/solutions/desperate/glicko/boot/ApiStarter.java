@@ -17,7 +17,7 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.EncodingFilter;
 import org.glassfish.jersey.servlet.ServletContainer;
-import solutions.desperate.glicko.api.*;
+import solutions.desperate.glicko.rest.*;
 import solutions.desperate.glicko.infrastructure.AccessLog;
 import solutions.desperate.glicko.infrastructure.GsonJerseyProvider;
 import solutions.desperate.glicko.infrastructure.HeaderFilter;

@@ -1,4 +1,4 @@
-package solutions.desperate.glicko.api.command;
+package solutions.desperate.glicko.rest.command;
 
 import io.swagger.annotations.ApiModelProperty;
 

@@ -1,4 +1,4 @@
-package solutions.desperate.glicko.api.dto;
+package solutions.desperate.glicko.rest.dto;
 
 public class UserDto {
     public String username;

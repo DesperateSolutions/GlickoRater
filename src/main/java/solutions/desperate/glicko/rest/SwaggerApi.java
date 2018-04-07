@@ -1,8 +1,11 @@
-package solutions.desperate.glicko.api;
+package solutions.desperate.glicko.rest;
 
+import io.swagger.converter.ModelConverter;
+import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Swagger;
 import io.swagger.models.auth.OAuth2Definition;
+import org.bson.types.ObjectId;
 import solutions.desperate.glicko.infrastructure.Config;
 
 import javax.inject.Inject;
@@ -40,6 +43,7 @@ public class SwaggerApi {
         beanConfig.setResourcePackage(resourcePackage);
         beanConfig.setScannerId(resourcePackage);
         beanConfig.setConfigId(resourcePackage);
+        ModelConverters.getInstance().addConverter(new ObjectIdModel());
         beanConfig.setScan(true);
         return beanConfig.getSwagger();
     }

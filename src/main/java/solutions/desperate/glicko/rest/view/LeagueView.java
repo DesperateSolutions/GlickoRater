@@ -1,7 +1,7 @@
-package solutions.desperate.glicko.api.view;
+package solutions.desperate.glicko.rest.view;
 
 import org.bson.types.ObjectId;
-import solutions.desperate.glicko.api.dto.SettingsDto;
+import solutions.desperate.glicko.rest.dto.SettingsDto;
 import solutions.desperate.glicko.domain.model.Game;
 import solutions.desperate.glicko.domain.model.League;
 import solutions.desperate.glicko.domain.model.Player;

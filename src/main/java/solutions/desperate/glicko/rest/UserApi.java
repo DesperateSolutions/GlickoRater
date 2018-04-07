@@ -1,11 +1,11 @@
-package solutions.desperate.glicko.api;
+package solutions.desperate.glicko.rest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import org.bson.types.ObjectId;
-import solutions.desperate.glicko.api.dto.UserDto;
+import solutions.desperate.glicko.rest.dto.UserDto;
 import solutions.desperate.glicko.domain.model.User;
 import solutions.desperate.glicko.domain.service.UserService;
 

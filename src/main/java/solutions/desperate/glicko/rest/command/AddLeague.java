@@ -1,15 +1,13 @@
-package solutions.desperate.glicko.api.command;
+package solutions.desperate.glicko.rest.command;
 
 import io.swagger.annotations.ApiModelProperty;
-import org.bson.types.ObjectId;
-import solutions.desperate.glicko.api.dto.SettingsDto;
+import solutions.desperate.glicko.rest.dto.SettingsDto;
 
 import java.beans.Transient;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public class UpdateLeague {
+public class AddLeague {
     @ApiModelProperty(required = true)
     public String name;
     @ApiModelProperty(required = true)
@@ -20,4 +18,8 @@ public class UpdateLeague {
         return Stream.of(name, settings).noneMatch(Objects::nonNull);
     }
 
+    private AddLeague(String name, SettingsDto settings) {
+        this.name = name;
+        this.settings = settings;
+    }
 }

@@ -3,7 +3,7 @@ package solutions.desperate.glicko.domain.model;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
-import solutions.desperate.glicko.api.command.GameCommand;
+import solutions.desperate.glicko.rest.command.GameCommand;
 
 import javax.ws.rs.BadRequestException;
 

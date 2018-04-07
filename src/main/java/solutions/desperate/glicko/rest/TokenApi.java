@@ -1,9 +1,9 @@
-package solutions.desperate.glicko.api;
+package solutions.desperate.glicko.rest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import solutions.desperate.glicko.api.view.TokenView;
+import solutions.desperate.glicko.rest.view.TokenView;
 import solutions.desperate.glicko.domain.service.AuthService;
 
 import javax.inject.Inject;
@@ -14,7 +14,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.UUID;
 
 @Api(value = "Oauth2")
 @Path("token")

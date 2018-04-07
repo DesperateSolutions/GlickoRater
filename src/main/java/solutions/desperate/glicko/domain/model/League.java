@@ -9,7 +9,7 @@ import org.mongodb.morphia.annotations.Index;
 import org.mongodb.morphia.annotations.IndexOptions;
 import org.mongodb.morphia.annotations.Indexes;
 import org.mongodb.morphia.annotations.Reference;
-import solutions.desperate.glicko.api.command.AddLeague;
+import solutions.desperate.glicko.rest.command.AddLeague;
 
 import java.util.Collections;
 import java.util.List;

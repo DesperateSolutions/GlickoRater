@@ -1,12 +1,12 @@
-package solutions.desperate.glicko.api;
+package solutions.desperate.glicko.rest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import org.bson.types.ObjectId;
-import solutions.desperate.glicko.api.command.PlayerCommand;
-import solutions.desperate.glicko.api.view.PlayerView;
+import solutions.desperate.glicko.rest.command.PlayerCommand;
+import solutions.desperate.glicko.rest.view.PlayerView;
 import solutions.desperate.glicko.domain.service.PlayerService;
 import solutions.desperate.glicko.domain.service.glicko.Glicko;
 

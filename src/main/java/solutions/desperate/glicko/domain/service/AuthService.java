@@ -2,8 +2,8 @@ package solutions.desperate.glicko.domain.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import solutions.desperate.glicko.api.dto.AuthHeader;
-import solutions.desperate.glicko.api.view.TokenView;
+import solutions.desperate.glicko.rest.dto.AuthHeader;
+import solutions.desperate.glicko.rest.view.TokenView;
 import solutions.desperate.glicko.domain.model.Token;
 import solutions.desperate.glicko.domain.model.User;
 import solutions.desperate.glicko.infrastructure.CrackStationHashing;

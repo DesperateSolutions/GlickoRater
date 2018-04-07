@@ -1,4 +1,4 @@
-package solutions.desperate.glicko.api.dto;
+package solutions.desperate.glicko.rest.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import solutions.desperate.glicko.domain.model.Settings;

@@ -1,8 +1,6 @@
 package solutions.desperate.glicko.domain.service.glicko;
 
-import solutions.desperate.glicko.domain.model.Game;
 import solutions.desperate.glicko.domain.model.Player;
-import solutions.desperate.glicko.domain.service.glicko.Glicko;
 
 import java.math.BigDecimal;
 
