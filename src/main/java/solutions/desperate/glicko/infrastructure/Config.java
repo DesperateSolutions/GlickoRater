@@ -23,8 +23,8 @@ public class Config {
             dbAddress = String.format("mongodb://%s:%s@%s:%s", user, pass, dbhost, dbPort);
         }
         this.port = Optional.ofNullable(System.getenv("GLICKO_PORT")).map(Integer::parseInt).orElse(port);
-        defaultUser = Optional.ofNullable(System.getenv("GLICKO_USER")).orElse("default");//.orElseThrow(() -> new RuntimeException("No default user supplied"));
-        defaultPass = Optional.ofNullable(System.getenv("GLICKO_PASS")).orElse("default");//.orElseThrow(() -> new RuntimeException("No default pass supplied"));
+        defaultUser = Optional.ofNullable(System.getenv("GLICKO_USER")).orElseThrow(() -> new RuntimeException("No default user supplied"));
+        defaultPass = Optional.ofNullable(System.getenv("GLICKO_PASS")).orElseThrow(() -> new RuntimeException("No default pass supplied"));
         baseAddess = Optional.ofNullable(System.getenv("GLICKO_ADDR")).map(URI::create).orElse(URI.create("http://localhost:3000"));
     }
 }
