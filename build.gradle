@@ -1,4 +1,6 @@
+//noinspection GroovyAssignabilityCheck
 group 'solutions.desperate'
+//noinspection GroovyAssignabilityCheck
 version '1.0'
 
 apply plugin: 'groovy'

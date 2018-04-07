@@ -23,10 +23,10 @@ class GlickoTestApp extends Specification {
     def setupSpec() {
         int port = new Random().nextInt(10000) + 10000
         client = new Client(port)
-        HashMap<String, String> configMap = new HashMap<>();
+        HashMap<String, String> configMap = new HashMap<>()
         configMap.put("GLICKO_PORT", port.toString())
         configMap.put("GLICKO_USER", "test_user")
-        configMap.put("GLICKO_PASS", "test_pass");
+        configMap.put("GLICKO_PASS", "test_pass")
         Injector injector = Guice.createInjector(new AppTestModule(new Config(configMap)))
         app = injector.getInstance(GlickoApp.class)
         mongoDb = (MockMongo) injector.getInstance(MongoDb.class)

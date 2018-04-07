@@ -3,7 +3,6 @@ package solutions.desperate.glicko.domain.model;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 

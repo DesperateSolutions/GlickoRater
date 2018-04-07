@@ -6,12 +6,10 @@ import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 import org.mongodb.morphia.query.UpdateOperations;
-import solutions.desperate.glicko.domain.model.Token;
 import solutions.desperate.glicko.domain.model.User;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.Consumes;
 import java.util.Map;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;

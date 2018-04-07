@@ -1,11 +1,9 @@
 package solutions.desperate.glicko.rest;
 
-import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Swagger;
 import io.swagger.models.auth.OAuth2Definition;
-import org.bson.types.ObjectId;
 import solutions.desperate.glicko.infrastructure.Config;
 
 import javax.inject.Inject;

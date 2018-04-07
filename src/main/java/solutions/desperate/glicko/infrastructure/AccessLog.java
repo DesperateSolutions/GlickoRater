@@ -11,7 +11,7 @@ import java.time.Instant;
 
 public class AccessLog implements RequestLog {
     private final Gson gson;
-    private Logger logger = LoggerFactory.getLogger("Access Log");
+    private final Logger logger = LoggerFactory.getLogger("Access Log");
 
     public AccessLog() {
         gson = GlickoGson.gson;

@@ -214,13 +214,11 @@ public class BigDecimalMath {
         /* relative accuracy requested is 10^(-precision)
          */
         final double eps = Math.pow(10.0, -mc.getPrecision());
-        for (; ; ) {
+        while (!(Math.abs(BigDecimal.ONE.subtract(x.divide(s.pow(2, locmc), locmc)).doubleValue()) < eps)) {
             /* s = s -(s/2-x/2s); test correction s-x/s for being
              * smaller than the precision requested. The relative correction is 1-x/s^2,
              * (actually half of this, which we use for a little bit of additional protection).
              */
-            if (Math.abs(BigDecimal.ONE.subtract(x.divide(s.pow(2, locmc), locmc)).doubleValue()) < eps)
-                break;
             s = s.add(x.divide(s, locmc)).divide(half, locmc);
             /* debugging
              * System.out.println("itr "+x.round(locmc).toString() + " " + s.round(locmc).toString()) ;

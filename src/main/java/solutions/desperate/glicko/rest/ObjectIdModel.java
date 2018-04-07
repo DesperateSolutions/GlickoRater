@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JavaType;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
 import io.swagger.models.Model;
-import io.swagger.models.properties.DateTimeProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.util.Json;

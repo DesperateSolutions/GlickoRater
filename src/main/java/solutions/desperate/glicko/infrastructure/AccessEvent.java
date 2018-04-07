@@ -1,5 +1,6 @@
 package solutions.desperate.glicko.infrastructure;
 
+@SuppressWarnings({"FieldCanBeLocal", "WeakerAccess"})
 public class AccessEvent {
     private final String queryString;
     private final String requestURI;
