@@ -1,6 +1,5 @@
 package solutions.desperate.glicko
 
-import com.google.common.collect.ImmutableMap
 import com.google.inject.Guice
 import com.google.inject.Injector
 import okhttp3.OkHttpClient
@@ -23,7 +22,7 @@ class GlickoTestApp extends Specification {
     def setupSpec() {
         int port = new Random().nextInt(10000) + 10000
         client = new Client(port)
-        HashMap<String, String> configMap = new HashMap<>()
+        Map<String, String> configMap = System.getenv()
         configMap.put("GLICKO_PORT", port.toString())
         configMap.put("GLICKO_USER", "test_user")
         configMap.put("GLICKO_PASS", "test_pass")
