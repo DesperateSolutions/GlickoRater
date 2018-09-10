@@ -21,7 +21,6 @@ public class AppModule extends AbstractModule {
         bind(Config.class).toInstance(config);
         bind(MongoDb.class).toInstance(mongoDb());
         bind(Glicko.class).to(BigDecimalGlicko.class);
-
     }
 
     private MongoDbImpl mongoDb() {

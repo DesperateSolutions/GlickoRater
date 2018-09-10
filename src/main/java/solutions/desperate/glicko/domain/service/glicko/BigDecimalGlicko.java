@@ -63,7 +63,7 @@ public class BigDecimalGlicko implements Glicko {
         BigDecimal A = a;
         BigDecimal B;
         if (delta.pow(2).compareTo(rd.pow(2).add(v)) > 0) {
-            B = log(delta.pow(2).subtract(rd.pow(2).subtract(v)));
+            B = log(delta.pow(2).subtract(rd.pow(2)).subtract(v));
         } else {
             BigDecimal k = ONE;
             B = a.subtract(k.multiply(DEFAULT_TAU.abs()));
