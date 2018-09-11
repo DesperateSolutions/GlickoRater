@@ -30,8 +30,8 @@ class GameApiTest extends GlickoTestApp {
         gameResponse.code() == 204
 
         and:
-        new JsonSlurper().parse(client.httpGet("/${league.id}/player/${player1.id}").body().byteStream()).rating == 1578.801187031134
-        new JsonSlurper().parse(client.httpGet("/${league.id}/player/${player2.id}").body().byteStream()).rating == 1421.198812968866
+        new JsonSlurper().parse(client.httpGet("/${league.id}/player/${player1.id}").body().byteStream()).rating == 1578.801716729907
+        new JsonSlurper().parse(client.httpGet("/${league.id}/player/${player2.id}").body().byteStream()).rating == 1421.198283270093
     }
 
     def "Can add a game between three players"() {
@@ -62,8 +62,8 @@ class GameApiTest extends GlickoTestApp {
         gameResponse.code() == 204
 
         and:
-        new JsonSlurper().parse(client.httpGet("/${league.id}/player/${player1.id}").body().byteStream()).rating == 1578.801187031134
-        new JsonSlurper().parse(client.httpGet("/${league.id}/player/${player2.id}").body().byteStream()).rating == 1421.198812968866
+        new JsonSlurper().parse(client.httpGet("/${league.id}/player/${player1.id}").body().byteStream()).rating == 1578.801716729907
+        new JsonSlurper().parse(client.httpGet("/${league.id}/player/${player2.id}").body().byteStream()).rating == 1421.198283270093
 
         when:
         gameResponse = client.httpPost("/${league.id}/game", makeGame(player3.id, player1.id, "1-0"))
@@ -72,7 +72,7 @@ class GameApiTest extends GlickoTestApp {
         gameResponse.code() == 204
 
         and:
-        new JsonSlurper().parse(client.httpGet("/${league.id}/player/${player1.id}").body().byteStream()).rating == 1499.4746219471065
-        new JsonSlurper().parse(client.httpGet("/${league.id}/player/${player3.id}").body().byteStream()).rating == 1596.4650642467375
+        new JsonSlurper().parse(client.httpGet("/${league.id}/player/${player1.id}").body().byteStream()).rating == 1499.4739527513502
+        new JsonSlurper().parse(client.httpGet("/${league.id}/player/${player3.id}").body().byteStream()).rating == 1596.4657600150126
     }
 }
