@@ -10,8 +10,10 @@ import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.eclipse.jetty.util.BlockingArrayQueue;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -23,8 +25,10 @@ import solutions.desperate.glicko.infrastructure.GsonJerseyProvider;
 import solutions.desperate.glicko.infrastructure.HeaderFilter;
 
 import javax.inject.Inject;
+import javax.servlet.DispatcherType;
 import javax.ws.rs.core.Application;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Set;
 
 public class ApiStarter {
@@ -60,6 +64,16 @@ public class ApiStarter {
         return connector;
     }
 
+    private FilterHolder allowCors() {
+        FilterHolder cors = new FilterHolder(CrossOriginFilter.class);
+        cors.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
+        cors.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, "*");
+        cors.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "OPTIONS,GET,POST,PUT,DELETE,HEAD");
+        cors.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin,Cache-Control");
+        cors.setInitParameter(CrossOriginFilter.CHAIN_PREFLIGHT_PARAM, "false");
+        return cors;
+    }
+
     private void removeVersionTag(Server server) {
         Arrays.stream(server.getConnectors())
                 .forEach(connector -> connector.getConnectionFactories()
@@ -87,6 +101,7 @@ public class ApiStarter {
         contextHandler.setContextPath("/");
         ServletHolder servletHolder = new ServletHolder(servletContainer);
         contextHandler.addServlet(servletHolder, "/*");
+        contextHandler.addFilter(allowCors(), "/*", EnumSet.of(DispatcherType.REQUEST));
 
         HandlerList handlerList = new HandlerList();
         handlerList.setHandlers(new Handler[]{
