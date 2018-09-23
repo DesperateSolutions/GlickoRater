@@ -14,16 +14,18 @@ public class Game {
     private ObjectId white;
     private ObjectId black;
     private int result;
+    private String writtenResult;
 
     private Game() {
         //Morphia
     }
 
-    private Game(ObjectId id, ObjectId white, ObjectId black, int result) {
+    private Game(ObjectId id, ObjectId white, ObjectId black, String writtenResult) {
         this._id = id;
         this.white = white;
         this.black = black;
-        this.result = result;
+        this.result = resultToInt(writtenResult);
+        this.writtenResult = writtenResult;
     }
 
     public ObjectId id() {
@@ -43,7 +45,7 @@ public class Game {
     }
 
     public static Game fromCommand(GameCommand gameCommand) {
-        return new Game(ObjectId.get(), gameCommand.whiteId, gameCommand.blackId, resultToInt(gameCommand.result));
+        return new Game(ObjectId.get(), gameCommand.whiteId, gameCommand.blackId, gameCommand.result);
     }
 
     private static int resultToInt(String result) {
@@ -52,5 +54,9 @@ public class Game {
             throw new BadRequestException("Invalid result");
         }
         return Integer.compare(Integer.parseInt(res[0]), Integer.parseInt(res[1]));
+    }
+
+    public String writtenResult() {
+        return writtenResult;
     }
 }
