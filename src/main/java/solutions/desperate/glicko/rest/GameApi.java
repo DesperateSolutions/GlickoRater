@@ -33,8 +33,8 @@ public class GameApi {
     public void addGame(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization,
                         @ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") ObjectId leagueId,
                         GameCommand game) {
-        if (!game.isValid()) {
-            throw new BadRequestException("Invalid input");
+        if (game == null || !game.isValid()) {
+            throw new BadRequestException("Invalid gamne");
         }
         gameService.addGame(Game.fromCommand(game), leagueId);
     }

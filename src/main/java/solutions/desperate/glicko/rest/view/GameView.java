@@ -3,21 +3,25 @@ package solutions.desperate.glicko.rest.view;
 import org.bson.types.ObjectId;
 import solutions.desperate.glicko.domain.model.Game;
 
+import java.time.Instant;
+
 public class GameView {
     public final ObjectId id;
     public final ObjectId whiteId;
     public final ObjectId blackId;
     public final String result;
+    public final Instant timestamp;
 
-    private GameView(ObjectId id, ObjectId white, ObjectId black, String result) {
+    private GameView(ObjectId id, ObjectId white, ObjectId black, String result, Instant timestamp) {
         this.id = id;
         this.whiteId = white;
         this.blackId = black;
         this.result = result;
+        this.timestamp = timestamp;
     }
 
     public static GameView fromDomain(Game game) {
-        return new GameView(game.id(), game.white(), game.black(), game.writtenResult());
+        return new GameView(game.id(), game.white(), game.black(), game.writtenResult(), game.timestamp());
     }
 
 }

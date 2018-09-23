@@ -31,8 +31,9 @@ class LeagueApiTest extends GlickoTestApp {
         def result = new JsonSlurper().parse(allLeagues.body().byteStream()) as List<League>
 
         then:
-        result.size() == 3
+        result.toUnique {a, b -> a.name <=> b.name}.size() == 3
         result.forEach { assert (it.name == "league1" || it.name == "league2" || it.name == "league3")}
+
     }
 
     def "Can delete a league"() {
