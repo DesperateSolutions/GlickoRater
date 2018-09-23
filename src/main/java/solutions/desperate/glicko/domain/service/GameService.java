@@ -10,6 +10,7 @@ import solutions.desperate.glicko.infrastructure.MongoDb;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class GameService {
@@ -48,8 +49,8 @@ public class GameService {
         return mongoDb.getObjectById(Game.class, id);
     }
 
-    public Stream<Game> allGames() {
-        return mongoDb.getStream(Game.class);
+    public Stream<Game> allGames(ObjectId leagueId) {
+        return leagueService.getLeague(leagueId).games().stream();
     }
 
     public void delete(ObjectId id) {

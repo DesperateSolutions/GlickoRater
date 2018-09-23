@@ -32,8 +32,8 @@ public class PlayerService {
         mongoDb.store(black);
     }
 
-    public Stream<Player> allPlayers() {
-        return mongoDb.getStream(Player.class);
+    public Stream<Player> allPlayers(ObjectId leagueId) {
+        return leagueService.getLeague(leagueId).players().stream();
     }
 
     public Player player(ObjectId id) {

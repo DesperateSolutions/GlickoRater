@@ -58,7 +58,7 @@ public class GameApi {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<GameView> games(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") ObjectId leagueId) {
-        return gameService.allGames().map(GameView::fromDomain).collect(Collectors.toList());
+        return gameService.allGames(leagueId).map(GameView::fromDomain).collect(Collectors.toList());
     }
 
     @ApiOperation(value = "Get a specific game from a league")

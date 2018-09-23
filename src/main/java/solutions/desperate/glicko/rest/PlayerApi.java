@@ -56,7 +56,7 @@ public class PlayerApi {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<PlayerView> games(@ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") ObjectId leagueId) {
-        return playerService.allPlayers().map(PlayerView::fromDomain).collect(Collectors.toList());
+        return playerService.allPlayers(leagueId).map(PlayerView::fromDomain).collect(Collectors.toList());
     }
 
     @ApiOperation(value = "Get a specific player from a league")

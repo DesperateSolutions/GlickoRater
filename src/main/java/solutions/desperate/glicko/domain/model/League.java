@@ -55,6 +55,10 @@ public class League {
         return players;
     }
 
+    public List<Game> games() {
+        return games;
+    }
+
     public static League fromCommand(AddLeague league) {
         return new League(ObjectId.get(), league.name, Settings.fromDto(league.settings), Collections.emptyList(), Collections.emptyList());
     }

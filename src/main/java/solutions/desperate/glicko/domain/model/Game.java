@@ -1,6 +1,5 @@
 package solutions.desperate.glicko.domain.model;
 
-import io.swagger.models.auth.In;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
@@ -8,7 +7,6 @@ import solutions.desperate.glicko.rest.command.GameCommand;
 
 import javax.ws.rs.BadRequestException;
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 
 @Entity
