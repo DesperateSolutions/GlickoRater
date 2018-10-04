@@ -15,12 +15,10 @@ jobs:
       - restore_cache:
           keys:
             - gradle-cache-{{ .Environment.CACHE_VERSION }}-{{ checksum "build.gradle" }}
-            - gradle-cache
 
       - restore_cache:
           keys:
             - gradle-build-caches-{{ .Environment.CACHE_VERSION }}-{{ .Revision }}
-            - gradle-build-caches
 
       - run:
           name: Restoring Gradle Build Caches
