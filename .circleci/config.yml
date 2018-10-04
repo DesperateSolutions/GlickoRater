@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: gradle:jdk8
+      - image: circleci/openjdk:8
       - image: mongo:4
     steps:
       - checkout
