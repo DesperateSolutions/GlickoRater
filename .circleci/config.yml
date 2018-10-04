@@ -54,7 +54,7 @@ jobs:
           name: Build Project
           command: ./gradlew --max-workers 2 --continue clean build -x test --info
 
-      - store_artifact:
+      - store_artifacts:
           path: ./build/libs/glicko-rater-1.0.jar
           prefix: jar
 
