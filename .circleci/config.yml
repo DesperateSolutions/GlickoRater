@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  test:
+  build:
     docker:
       - image: gradle:jre8
       - image: mongo:4
@@ -73,11 +73,9 @@ jobs:
           key: gradle-build-caches-{{ .Revision }}
           when: always
 
-  deploy:
-    steps:
-      - checkout
       - setup_remote_docker:
           docker_layer_caching: true
+
       - run:
           name: Build and push docker image
           command: |
