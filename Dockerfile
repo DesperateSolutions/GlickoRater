@@ -1,5 +1,13 @@
+FROM gradle:jdk8-alpine as builder
+
+WORKDIR /build
+ADD . .
+CMD ./gradlew shadowJar
+CMD ls
+
 FROM anapsix/alpine-java:8
+WORKDIR /app
 
-ADD build/libs/glicko-rater-1.0.jar/ /
+COPY --from=builder /build/build/libs/glicko-rater-*.jar /app
 
-CMD java -jar glicko-rater-1.0.jar
+CMD java -jar glicko-rater-*.jar

@@ -9,4 +9,9 @@ services:
   - docker
   - mongodb
 
-script: bash travis_build.sh
+script:
+  - docker login --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}"
+  - ./gradlew test
+  - docker build --tag desp/glickorater:${TRAVIS_COMMIT} .
+  - docker push desp/glickorater:${TRAVIS_COMMIT}
+
