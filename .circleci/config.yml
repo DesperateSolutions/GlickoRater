@@ -47,7 +47,7 @@ jobs:
       - run:
           name: Run tests
           environment:
-            - MONGODB_PORT_27017_TCP_ADDR="127.0.0.1"
+            MONGODB_PORT_27017_TCP_ADDR: 127.0.0.1
           command: ./gradlew test
 
       - run:
