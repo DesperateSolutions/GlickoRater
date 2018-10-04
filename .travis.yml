@@ -5,13 +5,21 @@ sudo: required
 env:
   - MONGODB_PORT_27017_TCP_ADDR="127.0.0.1"
 
-services:
-  - docker
-  - mongodb
-
-script:
-  - docker login --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}"
-  - ./gradlew test
-  - docker build --tag desp/glickorater:${TRAVIS_COMMIT} .
-  - docker push desp/glickorater:${TRAVIS_COMMIT}
-
+jobs:
+  include:
+    - stage: Build docker image
+      services:
+        - docker
+      script:
+        - docker build --tag desp/glickorater:${TRAVIS_COMMIT} .
+    - stage: Run tests
+      services:
+        - mongodb
+      script:
+        - ./gradlew test
+    - stage: Push docker image
+      services:
+        - docker
+      script:
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - docker push desp/glickorater:${TRAVIS_COMMIT}
