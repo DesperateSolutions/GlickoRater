@@ -43,14 +43,14 @@ jobs:
           key: gradle-cache-{{ .Environment.CACHE_VERSION }}-{{ checksum "build.gradle" }}
 
       - run:
+          name: Build Project
+          command: ./gradlew --max-workers 2 --continue clean shadowJar -x test --info
+
+      - run:
           name: Run tests
           environment:
             MONGODB_PORT_27017_TCP_ADDR: 127.0.0.1
           command: ./gradlew test
-
-      - run:
-          name: Build Project
-          command: ./gradlew --max-workers 2 --continue clean shadowJar -x test --info
 
       - store_artifacts:
           path: ./build/libs/glicko-rater-1.0.jar
