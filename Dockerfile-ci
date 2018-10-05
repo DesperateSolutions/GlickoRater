@@ -1,0 +1,6 @@
+FROM anapsix/alpine-java:8
+WORKDIR /app
+
+ADD ./artifacts/glicko-rater-*.jar /app
+
+CMD java -jar glicko-rater-*.jar
