@@ -36,7 +36,7 @@ public class PlayerApi {
         if(player.isNotValid()) {
             throw new BadRequestException("Invalid player");
         }
-        playerService.addPlayer(glicko.defaultPlayer(player.name), leagueId);
+        playerService.addPlayer(glicko.defaultPlayer(player.name, leagueId), leagueId);
     }
 
     @ApiOperation(value = "Update a player", authorizations = @Authorization("bearer"))

@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Entity
-@Indexes(@Index(fields = @Field("name"), options = @IndexOptions(unique = true)))
+@Indexes(@Index(fields = @Field("name")))
 public class League {
     @Id
     private ObjectId _id;

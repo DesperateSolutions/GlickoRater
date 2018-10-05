@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Entity
-@Indexes(@Index(fields = @Field("name"),options = @IndexOptions(unique = true)))
+@Indexes(@Index(fields = {@Field("name"), @Field("league")}, options = @IndexOptions(unique = true)))
 public class Player {
     @Id
     private ObjectId _id;
@@ -15,6 +15,7 @@ public class Player {
     private String rating;
     private String rd;
     private String volatility;
+    private ObjectId league;
     @Reference
     private List<Game> games;
 
@@ -22,22 +23,18 @@ public class Player {
         //Morphia
     }
 
-    public Player(ObjectId id, String name, String rating, String rd, String volatility, List<Game> games) {
+    public Player(ObjectId id, String name, String rating, String rd, String volatility, List<Game> games, ObjectId league) {
         this._id = id;
         this.name = name;
         this.rating = rating;
         this.rd = rd;
         this.volatility = volatility;
         this.games = games;
+        this.league = league;
     }
 
-    public Player(String name, String rating, String rd, String volatility) {
-        this._id = ObjectId.get();
-        this.name = name;
-        this.rating = rating;
-        this.rd = rd;
-        this.volatility = volatility;
-        this.games = Collections.emptyList();
+    public Player(String name, String rating, String rd, String volatility, ObjectId league) {
+        this(ObjectId.get(), name, rating, rd, volatility, Collections.emptyList(), league);
     }
 
     public String rating() {
@@ -62,6 +59,10 @@ public class Player {
 
     public List<Game> games() {
         return games;
+    }
+
+    public ObjectId league() {
+        return league;
     }
 
     public void addGameToPlayer(Game game) {

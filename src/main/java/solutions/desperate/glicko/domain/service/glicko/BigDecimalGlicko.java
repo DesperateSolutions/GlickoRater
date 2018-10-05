@@ -1,5 +1,6 @@
 package solutions.desperate.glicko.domain.service.glicko;
 
+import org.bson.types.ObjectId;
 import solutions.desperate.glicko.domain.model.Player;
 import solutions.desperate.glicko.domain.service.glicko.Glicko;
 
@@ -115,11 +116,11 @@ public class BigDecimalGlicko implements Glicko {
         BigDecimal volatility = new BigDecimal(player.volatility());
         return new Player(player.name(), player.rating(),
                           SCALE.multiply(preRatingRd(convertRdToGlicko2(rd), volatility)).toPlainString(),
-                          player.volatility());
+                          player.volatility(), player.league());
     }
 
-    public Player defaultPlayer(String name) {
-        return new Player(name, DEFAULT_RATING.toPlainString(), DEFAULT_RD.toPlainString(), DEFAULT_VOLATILITY.toPlainString());
+    public Player defaultPlayer(String name, ObjectId league) {
+        return new Player(name, DEFAULT_RATING.toPlainString(), DEFAULT_RD.toPlainString(), DEFAULT_VOLATILITY.toPlainString(), league);
     }
 
     public Player glicko2(Player player1, Player player2, double result) {
@@ -147,6 +148,7 @@ public class BigDecimalGlicko implements Glicko {
                           DEFAULT_RATING.add(SCALE.multiply(ratingMarked)).toPlainString(),
                           SCALE.multiply(rdMarked).toPlainString(),
                           volatilityMarked.toPlainString(),
-                          player1.games());
+                          player1.games(),
+                          player1.league());
     }
 }

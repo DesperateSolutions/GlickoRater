@@ -1,5 +1,6 @@
 package solutions.desperate.glicko.domain.service.glicko;
 
+import org.bson.types.ObjectId;
 import solutions.desperate.glicko.domain.model.Player;
 
 import java.math.BigDecimal;
@@ -101,18 +102,20 @@ public class DoubleGlicko implements Glicko {
         return rating + (Math.pow(rdMarked, 2) * g * (result - e));
     }
 
-    public Player defaultPlayer(String name) {
+    public Player defaultPlayer(String name, ObjectId league) {
         return new Player(name,
                           String.valueOf(DEFAULT_RATING),
                           String.valueOf(DEFAULT_RD),
-                          String.valueOf(DEFAULT_VOLATILITY));
+                          String.valueOf(DEFAULT_VOLATILITY),
+                          league);
     }
 
     public Player noGamesRd(Player player) {
         return new Player(player.name(),
                           player.rating(),
                           BigDecimal.valueOf(SCALE * preRatingRd(convertRdToGlicko2(Double.parseDouble(player.rd())), Double.parseDouble(player.volatility()))).toPlainString(),
-                          player.volatility());
+                          player.volatility(),
+                          player.league());
     }
 
     public Player glicko2(Player player1, Player player2, double result) {
@@ -140,6 +143,7 @@ public class DoubleGlicko implements Glicko {
                           String.valueOf(DEFAULT_RATING + (SCALE * ratingMarked)),
                           String.valueOf(BigDecimal.valueOf(SCALE * rdMarked)),
                           String.valueOf(BigDecimal.valueOf(volatilityMarked)),
-                          player1.games());
+                          player1.games(),
+                          player1.league());
     }
 }

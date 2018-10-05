@@ -13,7 +13,7 @@ public class Config {
 
     //Might want a better way to start the app with. Port is there for the tests
     public Config(Map<String, String> configMap){
-        String dbhost = Optional.ofNullable(configMap.get("MONGODB_ADDR")).orElse("localhost");
+        String dbhost = Optional.ofNullable(configMap.get("MONGODB_ADDR")).orElse("docker");
         String dbPort = Optional.ofNullable(configMap.get("MONGODB_PORT")).orElse("27017");
         String user = configMap.get("MONGODB_USER");
         String pass = configMap.get("MONGODB_PASS");
@@ -24,8 +24,8 @@ public class Config {
             dbAddress = String.format("mongodb://%s:%s@%s:%s", user, pass, dbhost, dbPort);
         }
         this.port = Optional.ofNullable(configMap.get("GLICKO_PORT")).map(Integer::parseInt).orElse(3000);
-        defaultUser = Optional.ofNullable(configMap.get("GLICKO_USER")).orElseThrow(() -> new RuntimeException("No default user supplied"));
-        defaultPass = Optional.ofNullable(configMap.get("GLICKO_PASS")).orElseThrow(() -> new RuntimeException("No default pass supplied"));
+        defaultUser = Optional.ofNullable(configMap.get("GLICKO_USER")).orElse("admin");//.orElseThrow(() -> new RuntimeException("No default user supplied"));
+        defaultPass = Optional.ofNullable(configMap.get("GLICKO_PASS")).orElse("admin");//.orElseThrow(() -> new RuntimeException("No default pass supplied"));
         baseAddess = Optional.ofNullable(configMap.get("GLICKO_ADDR")).map(URI::create).orElse(URI.create("http://localhost:3000"));
     }
 }

@@ -35,6 +35,9 @@ public class GameService {
         }
         Player white = playerService.player(game.white());
         Player black = playerService.player(game.black());
+        if(!white.league().equals(black.league())) {
+            throw new BadRequestException("Players need to be the in the same league");
+        }
         Player updatedWhite = glicko.glicko2(white, black, game.result() == 1 ? 1.0 : game.result() == 0 ? 0.5 : 0.0);
         Player updatedBlack = glicko.glicko2(black, white, game.result() == 1 ? 0.0 : game.result() == 0 ? 0.5 : 1.0);
         updatedWhite.addGameToPlayer(game);
