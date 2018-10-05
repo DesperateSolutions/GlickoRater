@@ -1,7 +1,5 @@
 package solutions.desperate.glicko.infrastructure;
 
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCommandException;
@@ -13,7 +11,6 @@ import solutions.desperate.glicko.domain.model.User;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
