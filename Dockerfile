@@ -1,5 +1,6 @@
 FROM anapsix/alpine-java:8
+WORKDIR /app
 
-ADD build/libs/glicko-rater-1.0.jar/ /
+ADD ./build/libs/glicko-rater-*.jar /app
 
-CMD java -jar glicko-rater-1.0.jar
+CMD java -jar glicko-rater-*.jar
