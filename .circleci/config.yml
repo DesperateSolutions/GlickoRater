@@ -56,6 +56,9 @@ jobs:
           path: ./build/libs/glicko-rater-1.0.jar
           prefix: jar
 
+      - store_test_results:
+          path: ./build/test-results/
+
       - run:
           name: Collecting Gradle Build Caches
           command: |
