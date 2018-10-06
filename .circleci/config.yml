@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  build:
+  test:
     docker:
       - image: circleci/openjdk:11
       - image: mongo:4
@@ -16,21 +16,14 @@ jobs:
           keys:
             - gradle-cache-{{ .Environment.CACHE_VERSION }}-{{ checksum "build.gradle" }}
 
-      - restore_cache:
-          keys:
-            - gradle-build-caches-{{ .Environment.CACHE_VERSION }}-{{ .Revision }}
-
       - run:
-          name: Restoring Gradle Build Caches
-          command: |
-            [ -d ~/gradle-build-caches ] &&
-            [ -n "$(ls -A ~/gradle-build-caches)" ] &&
-            rm -rf ~/.gradle/caches/build-cache-* &&
-            mv ~/gradle-build-caches/* ~/.gradle/caches/ || true
+          name: Run tests
+          environment:
+            MONGODB_ADDR: 127.0.0.1
+          command: ./gradlew test
 
-      - run:
-          name: Downloading Dependencies
-          command: ./gradlew --max-workers 2 downloadDependencies
+      - store_test_results:
+          path: ./build/test-results/
 
       - save_cache:
           paths:
@@ -42,37 +35,67 @@ jobs:
             - ~/.gradle/caches/
           key: gradle-cache-{{ .Environment.CACHE_VERSION }}-{{ checksum "build.gradle" }}
 
+  build:
+    docker:
+      - image: circleci/openjdk:11
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - gradle-wrapper-{{ .Environment.CACHE_VERSION }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+
+      - restore_cache:
+          keys:
+            - gradle-cache-{{ .Environment.CACHE_VERSION }}-{{ checksum "build.gradle" }}
+
       - run:
           name: Build Project
           command: ./gradlew --max-workers 2 --continue clean shadowJar -x test --info
-
-      - run:
-          name: Run tests
-          environment:
-            MONGODB_PORT_27017_TCP_ADDR: 127.0.0.1
-          command: ./gradlew test
 
       - store_artifacts:
           path: ./build/libs/glicko-rater-1.0.jar
           prefix: jar
 
-      - store_test_results:
-          path: ./build/test-results/
-
-      - run:
-          name: Collecting Gradle Build Caches
-          command: |
-            mkdir -p ~/gradle-build-caches &&
-            [ -d ~/.gradle/caches ] &&
-            [ -n "$(ls -Ad ~/.gradle/caches/build-cache-* 2>/dev/null)" ] &&
-            mv ~/.gradle/caches/build-cache-* ~/gradle-build-caches || true
-          when: always
+      - persist_to_workspace:
+          root: ./build/libs
+          paths: glicko-rater-1.0.jar
 
       - save_cache:
           paths:
-            - ~/gradle-build-caches
-          key: gradle-build-caches-{{ .Environment.CACHE_VERSION }}-{{ .Revision }}
-          when: always
+            - ~/.gradle/wrapper/
+          key: gradle-wrapper-{{ .Environment.CACHE_VERSION }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+
+      - save_cache:
+          paths:
+            - ~/.gradle/caches/
+          key: gradle-cache-{{ .Environment.CACHE_VERSION }}-{{ checksum "build.gradle" }}
+
+  publish-to-github:
+    docker:
+      - image: cibuilds/github:0.10
+
+    steps:
+      - checkout
+
+      - attach_workspace:
+          at: ./build/libs
+
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            VERSION=$(git describe --tags)
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./build/libs
+
+  publish-to-docker-hub:
+    docker:
+      - image: cibuilds/docker:18.06.1
+
+    steps:
+      - checkout
+
+      - attach_workspace:
+          at: ./build/libs
 
       - setup_remote_docker:
           docker_layer_caching: true
@@ -80,6 +103,35 @@ jobs:
       - run:
           name: Build and push docker image
           command: |
-            docker build --tag desp/glickorater:${CIRCLE_SHA1} .
+            VERSION=$(git describe --tags)
+            docker build --tag desp/glickorater:${VERSION} .
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-            docker push desp/glickorater:${CIRCLE_SHA1}
+            docker push desp/glickorater:${VERSION}
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - test
+      - build:
+          filters:
+            tags:
+              only: /.*/
+      - publish-to-github:
+          requires:
+            - build
+            - test
+          filters:
+            branches:
+              only: master
+            tags:
+              only: /.*/
+      - publish-to-docker-hub:
+          requires:
+            - build
+            - test
+          filters:
+            branches:
+              only: master
+            tags:
+              only: /.*/
