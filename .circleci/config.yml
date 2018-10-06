@@ -4,7 +4,7 @@ jobs:
   test:
     docker:
       - image: circleci/openjdk:11
-      - image: mongo:4
+      - image: circleci/mongo:4.1-ram
     steps:
       - checkout
 
@@ -37,7 +37,7 @@ jobs:
 
   build:
     docker:
-      - image: circleci/openjdk:11
+      - image: circleci/docker:11
     steps:
       - checkout
 
@@ -71,7 +71,7 @@ jobs:
             - ~/.gradle/caches/
           key: gradle-cache-{{ .Environment.CACHE_VERSION }}-{{ checksum "build.gradle" }}
 
-  publish:
+  publish-to-github:
     docker:
       - image: cibuilds/github:0.10
 
@@ -86,6 +86,16 @@ jobs:
           command: |
             VERSION=$(git describe --tags)
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./build/libs
+
+  publish-to-docker-hub:
+    docker:
+      - image: cibuilds/docker:18.06.1
+
+    steps:
+      - checkout
+
+      - attach_workspace:
+          at: ./build/libs
 
       - setup_remote_docker:
           docker_layer_caching: true
@@ -109,7 +119,15 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - publish:
+      - publish-to-github:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+            tags:
+              only: /.*/
+      - publish-to-docker-hub:
           requires:
             - build
           filters:
