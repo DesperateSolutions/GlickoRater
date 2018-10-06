@@ -114,14 +114,13 @@ workflows:
     jobs:
       - test
       - build:
-          requires:
-            - test
           filters:
             tags:
               only: /.*/
       - publish-to-github:
           requires:
             - build
+            - test
           filters:
             branches:
               only: master
@@ -130,6 +129,7 @@ workflows:
       - publish-to-docker-hub:
           requires:
             - build
+            - test
           filters:
             branches:
               only: master
