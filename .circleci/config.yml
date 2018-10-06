@@ -104,7 +104,7 @@ jobs:
           name: Build and push docker image
           command: |
             VERSION=$(git describe --tags)
-            docker build --tag desp/glickorater:${VERSION} Dockerfile-ci
+            docker build --tag desp/glickorater:${VERSION} .
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
             docker push desp/glickorater:${VERSION}
 
