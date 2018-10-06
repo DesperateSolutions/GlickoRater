@@ -58,8 +58,7 @@ public class MongoDbImpl implements MongoDb {
     private void createDefaultUser(Config config) {
         if (getObjectByField(User.class, "username", config.defaultUser) == null) {
             try {
-                User user = new User(ObjectId.get(), config.defaultUser,
-                                     CrackStationHashing.createHash(config.defaultPass));
+                User user = new User(config.defaultUser, CrackStationHashing.createHash(config.defaultPass));
                 datastore.save(user);
             } catch (CrackStationHashing.CannotPerformOperationException e) {
                 throw new RuntimeException(e);

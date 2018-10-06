@@ -38,7 +38,7 @@ public class UserApi {
     @ApiOperation(value = "Delete user", authorizations = @Authorization("bearer"))
     @DELETE
     @Path("{id}")
-    public void deleteUser(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization, @PathParam("id") ObjectId id) {
-        userService.deleteUser(id);
+    public void deleteUser(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization, @PathParam("username") String username) {
+        userService.deleteUser(username);
     }
 }

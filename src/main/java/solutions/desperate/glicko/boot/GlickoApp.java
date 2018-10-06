@@ -2,12 +2,17 @@ package solutions.desperate.glicko.boot;
 
 import org.eclipse.jetty.server.Server;
 import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.FlywayException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import solutions.desperate.glicko.infrastructure.Config;
 
 import javax.inject.Inject;
 import javax.sql.DataSource;
 
 public class GlickoApp {
+    private static final Logger logger = LoggerFactory.getLogger(GlickoApp.class);
+
     private Server server;
     private final Config config;
     private final ApiStarter apiStarter;
@@ -23,7 +28,13 @@ public class GlickoApp {
 
     public void startApp() {
         server = apiStarter.init(config.port);
-        flyway();
+        Flyway flyway = Flyway.configure().dataSource(dataSource).load();
+        try {
+            flyway.migrate();
+        } catch (FlywayException e) {
+            logger.error("Flyway failed", e);
+            flyway.repair();
+        }
         try {
             server.start();
         } catch (Exception e) {
@@ -32,8 +43,7 @@ public class GlickoApp {
     }
 
     private void flyway() {
-        Flyway flyway = Flyway.configure().dataSource(dataSource).load();
-        flyway.migrate();
+
     }
 
     public void join() {

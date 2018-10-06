@@ -26,13 +26,12 @@ create table Game (
 );
 
 create table api_user (
-    id varchar(255) PRIMARY KEY,
-    username varchar(255),
+    username varchar(255) PRIMARY KEY,
     password varchar(255)
 );
 
 create table Token (
     token varchar(255) PRIMARY KEY,
-    user_id varchar(255) references api_user(id),
+    username varchar(255) references api_user(username),
     expiry timestamp
 );
