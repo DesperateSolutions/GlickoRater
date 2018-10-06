@@ -1,10 +1,11 @@
-package solutions.desperate.glicko.infrastructure;
+package solutions.desperate.glicko.infrastructure.db;
 
 import org.bson.types.ObjectId;
 
 import java.util.Map;
 import java.util.stream.Stream;
 
+@Deprecated
 public interface MongoDb {
     <T> void store(T entity);
     <T> Stream<T> getStream(Class<T> clazz);

@@ -5,7 +5,7 @@ import solutions.desperate.glicko.domain.model.League
 import solutions.desperate.glicko.domain.service.glicko.DoubleGlicko
 import solutions.desperate.glicko.domain.service.glicko.Glicko
 import solutions.desperate.glicko.infrastructure.Config
-import solutions.desperate.glicko.infrastructure.MongoDb
+import solutions.desperate.glicko.infrastructure.db.MongoDb
 
 class AppTestModule extends AbstractModule {
     private final Config config

@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import org.bson.types.ObjectId;
+import solutions.desperate.glicko.domain.model.Player;
+import solutions.desperate.glicko.domain.service.GameService;
 import solutions.desperate.glicko.rest.command.PlayerCommand;
 import solutions.desperate.glicko.rest.view.PlayerView;
 import solutions.desperate.glicko.domain.service.PlayerService;
@@ -20,11 +22,13 @@ import java.util.stream.Collectors;
 @Path("{league}/player")
 public class PlayerApi {
     private final PlayerService playerService;
+    private final GameService gameService;
     private final Glicko glicko;
 
     @Inject
-    public PlayerApi(PlayerService playerService, Glicko glicko) {
+    public PlayerApi(PlayerService playerService, GameService gameService, Glicko glicko) {
         this.playerService = playerService;
+        this.gameService = gameService;
         this.glicko = glicko;
     }
 
@@ -56,7 +60,7 @@ public class PlayerApi {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<PlayerView> games(@ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") ObjectId leagueId) {
-        return playerService.allPlayers(leagueId).map(PlayerView::fromDomain).collect(Collectors.toList());
+        return playerService.allPlayers(leagueId).map((Player player) -> PlayerView.fromDomain(player, gameService.allGames(leagueId))).collect(Collectors.toList());
     }
 
     @ApiOperation(value = "Get a specific player from a league")
@@ -65,7 +69,7 @@ public class PlayerApi {
     @Produces(MediaType.APPLICATION_JSON)
     public PlayerView game(@ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") ObjectId leagueId,
                            @ApiParam(required = true, value = "ID of the player being fetched") @PathParam("id") ObjectId id) {
-        return PlayerView.fromDomain(playerService.player(id));
+        return PlayerView.fromDomain(playerService.player(id), gameService.allGames(leagueId));
     }
 
     @ApiOperation(value = "Delete a player from a league. Players who have played games can not be deleted", authorizations = @Authorization("bearer"))

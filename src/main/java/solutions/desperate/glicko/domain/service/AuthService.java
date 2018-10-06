@@ -7,7 +7,7 @@ import solutions.desperate.glicko.rest.view.TokenView;
 import solutions.desperate.glicko.domain.model.Token;
 import solutions.desperate.glicko.domain.model.User;
 import solutions.desperate.glicko.infrastructure.CrackStationHashing;
-import solutions.desperate.glicko.infrastructure.MongoDb;
+import solutions.desperate.glicko.infrastructure.db.MongoDb;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotAuthorizedException;

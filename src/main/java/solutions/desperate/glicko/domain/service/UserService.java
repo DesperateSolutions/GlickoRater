@@ -2,7 +2,7 @@ package solutions.desperate.glicko.domain.service;
 
 import org.bson.types.ObjectId;
 import solutions.desperate.glicko.domain.model.User;
-import solutions.desperate.glicko.infrastructure.MongoDb;
+import solutions.desperate.glicko.infrastructure.db.MongoDb;
 
 import javax.inject.Inject;
 

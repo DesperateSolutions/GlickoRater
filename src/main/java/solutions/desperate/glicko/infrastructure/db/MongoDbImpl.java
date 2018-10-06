@@ -1,4 +1,4 @@
-package solutions.desperate.glicko.infrastructure;
+package solutions.desperate.glicko.infrastructure.db;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -8,6 +8,8 @@ import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 import org.mongodb.morphia.query.UpdateOperations;
 import solutions.desperate.glicko.domain.model.User;
+import solutions.desperate.glicko.infrastructure.Config;
+import solutions.desperate.glicko.infrastructure.CrackStationHashing;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

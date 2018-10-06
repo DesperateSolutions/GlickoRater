@@ -8,6 +8,7 @@ import solutions.desperate.glicko.domain.model.Player;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class LeagueView {
     public final ObjectId id;
@@ -24,11 +25,11 @@ public class LeagueView {
         this.games = games;
     }
 
-    public static LeagueView fromDomain(League league) {
+    public static LeagueView fromDomain(League league, Stream<Player> players, List<Game> games) {
         return new LeagueView(league._id(),
                 league.name(),
                 SettingsDto.fromDomain(league.settings()),
-                league.players().stream().map(Player::id).collect(Collectors.toList()),
-                league.players().stream().flatMap(p -> p.games().stream().map(Game::id)).distinct().collect(Collectors.toList()));
+                players.map(Player::id).collect(Collectors.toList()),
+                games.stream().map(Game::id).collect(Collectors.toList()));
     }
 }

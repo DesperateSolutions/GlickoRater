@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import org.bson.types.ObjectId;
+import solutions.desperate.glicko.domain.service.PlayerService;
 import solutions.desperate.glicko.rest.command.AddLeague;
 import solutions.desperate.glicko.rest.command.UpdateLeague;
 import solutions.desperate.glicko.rest.dto.AuthHeader;
@@ -17,6 +18,7 @@ import solutions.desperate.glicko.domain.service.LeagueService;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,11 +27,13 @@ import java.util.stream.Collectors;
 @Path("league")
 public class LeagueApi {
     private final LeagueService leagueService;
+    private final PlayerService playerService;
     private final AuthService authService;
 
     @Inject
-    public LeagueApi(LeagueService leagueService, AuthService authService) {
+    public LeagueApi(LeagueService leagueService, PlayerService playerService, AuthService authService) {
         this.leagueService = leagueService;
+        this.playerService = playerService;
         this.authService = authService;
     }
 
@@ -64,7 +68,10 @@ public class LeagueApi {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<LeagueView> leagues() {
-        return leagueService.getAllLeagues().map(LeagueView::fromDomain).collect(Collectors.toList());
+        return leagueService.getAllLeagues()
+                            .stream()
+                            .map(league -> LeagueView.fromDomain(league, playerService.allPlayers(league._id()), Collections.emptyList()))
+                            .collect(Collectors.toList());
     }
 
     @ApiOperation(value = "Get a specific league")
@@ -72,7 +79,12 @@ public class LeagueApi {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public LeagueView league(@ApiParam(required = true, value = "ID of the league being fetched") @PathParam("id") ObjectId id) {
-        return LeagueView.fromDomain(Optional.ofNullable(leagueService.getLeague(id)).orElseThrow(() -> new NotFoundException("No such league")));
+        return LeagueView.fromDomain(
+                Optional.ofNullable(leagueService.getLeague(id))
+                        .orElseThrow(() -> new NotFoundException("No such league")),
+                playerService.allPlayers(id),
+                Collections.emptyList()
+        );
     }
 
     @ApiOperation(value = "Delete a league", authorizations = @Authorization("bearer"))

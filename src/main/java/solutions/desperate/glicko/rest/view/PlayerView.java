@@ -6,6 +6,7 @@ import solutions.desperate.glicko.domain.model.Player;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PlayerView {
     public final ObjectId id;
@@ -24,12 +25,12 @@ public class PlayerView {
         this.games = games;
     }
 
-    public static PlayerView fromDomain(Player player) {
+    public static PlayerView fromDomain(Player player, Stream<Game> games) {
         return new PlayerView(player.id(),
                               player.name(),
                               Double.valueOf(player.rating()),
                               Double.valueOf(player.rd()),
                               Double.valueOf(player.volatility()),
-                              player.games().stream().map(Game::id).collect(Collectors.toList()));
+                              games.map(Game::id).collect(Collectors.toList()));
     }
 }

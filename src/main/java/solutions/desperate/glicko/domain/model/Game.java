@@ -1,29 +1,21 @@
 package solutions.desperate.glicko.domain.model;
 
 import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Entity;
-import org.mongodb.morphia.annotations.Id;
 import solutions.desperate.glicko.rest.command.GameCommand;
 
 import javax.ws.rs.BadRequestException;
 import java.time.Instant;
 import java.util.Optional;
 
-@Entity
 public class Game {
-    @Id
-    private ObjectId _id;
-    private ObjectId white;
-    private ObjectId black;
-    private int result;
-    private String writtenResult;
-    private Instant timestamp;
+    private final ObjectId _id;
+    private final ObjectId white;
+    private final ObjectId black;
+    private final int result;
+    private final String writtenResult;
+    private final Instant timestamp;
 
-    private Game() {
-        //Morphia
-    }
-
-    private Game(ObjectId id, ObjectId white, ObjectId black, String writtenResult, Instant timestamp) {
+    public Game(ObjectId id, ObjectId white, ObjectId black, String writtenResult, Instant timestamp) {
         this._id = id;
         this.white = white;
         this.black = black;

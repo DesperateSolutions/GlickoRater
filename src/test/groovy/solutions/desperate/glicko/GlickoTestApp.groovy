@@ -8,7 +8,7 @@ import okhttp3.RequestBody
 import solutions.desperate.glicko.boot.GlickoApp
 import solutions.desperate.glicko.domain.model.Token
 import solutions.desperate.glicko.infrastructure.Config
-import solutions.desperate.glicko.infrastructure.MongoDb
+import solutions.desperate.glicko.infrastructure.db.MongoDb
 import spock.lang.Specification
 
 import javax.ws.rs.core.MediaType

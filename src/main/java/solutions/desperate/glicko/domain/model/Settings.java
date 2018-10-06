@@ -9,10 +9,7 @@ public class Settings {
     private int periodLength;
     private boolean scoredResults;
 
-    private Settings() {
-    }
-
-    private Settings(boolean drawAllowed, int periodLength, boolean scoredResults) {
+    public Settings(boolean drawAllowed, int periodLength, boolean scoredResults) {
         this.drawAllowed = drawAllowed;
         this.periodLength = periodLength;
         this.scoredResults = scoredResults;

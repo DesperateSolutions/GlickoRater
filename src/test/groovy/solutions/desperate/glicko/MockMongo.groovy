@@ -7,7 +7,7 @@ import org.mongodb.morphia.Datastore
 import org.mongodb.morphia.Morphia
 import org.mongodb.morphia.query.UpdateOperations
 import solutions.desperate.glicko.infrastructure.Config
-import solutions.desperate.glicko.infrastructure.MongoDb
+import solutions.desperate.glicko.infrastructure.db.MongoDb
 
 import java.util.stream.Stream
 import java.util.stream.StreamSupport
