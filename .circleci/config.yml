@@ -4,7 +4,7 @@ jobs:
   test:
     docker:
       - image: circleci/openjdk:11
-      - image: circleci/mongo:4.1-ram
+      - image: mongo:4
     steps:
       - checkout
 
