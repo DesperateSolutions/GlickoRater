@@ -59,7 +59,7 @@ jobs:
 
       - persist_to_workspace:
           root: ./build/libs
-          paths: ./build/libs/glicko-rater-1.0.jar
+          paths: glicko-rater-1.0.jar
 
       - save_cache:
           paths:
