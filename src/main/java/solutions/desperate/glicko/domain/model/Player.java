@@ -1,17 +1,17 @@
 package solutions.desperate.glicko.domain.model;
 
-import org.bson.types.ObjectId;
+import java.util.UUID;
 
 public class Player {
-    private final ObjectId _id;
+    private final UUID id;
     private final String name;
     private final String rating;
     private final String rd;
     private final String volatility;
-    private final ObjectId league;
+    private final UUID league;
 
-    public Player(ObjectId id, String name, String rating, String rd, String volatility, ObjectId league) {
-        this._id = id;
+    public Player(UUID id, String name, String rating, String rd, String volatility, UUID league) {
+        this.id = id;
         this.name = name;
         this.rating = rating;
         this.rd = rd;
@@ -35,11 +35,11 @@ public class Player {
         return name;
     }
 
-    public ObjectId id() {
-        return _id;
+    public UUID id() {
+        return id;
     }
 
-    public ObjectId league() {
+    public UUID league() {
         return league;
     }
 }

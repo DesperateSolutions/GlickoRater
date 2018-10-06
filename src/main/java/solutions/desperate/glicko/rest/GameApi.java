@@ -4,7 +4,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
-import org.bson.types.ObjectId;
 import solutions.desperate.glicko.rest.command.GameCommand;
 import solutions.desperate.glicko.rest.view.GameView;
 import solutions.desperate.glicko.domain.model.Game;
@@ -15,6 +14,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Api("Game API")
@@ -31,7 +31,7 @@ public class GameApi {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public void addGame(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization,
-                        @ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") ObjectId leagueId,
+                        @ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") UUID leagueId,
                         GameCommand game) {
         if (game == null || !game.isValid()) {
             throw new BadRequestException("Invalid gamne");
@@ -44,7 +44,7 @@ public class GameApi {
     @Path("batch")
     @Consumes(MediaType.APPLICATION_JSON)
     public void addGames(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization,
-                         @ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") ObjectId leagueId,
+                         @ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") UUID leagueId,
                          List<GameCommand> game) {
         game.forEach(g -> {
             if (g.isValid()) {
@@ -57,7 +57,7 @@ public class GameApi {
     @ApiOperation(value = "Lists all games from a league")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<GameView> games(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") ObjectId leagueId) {
+    public List<GameView> games(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") UUID leagueId) {
         return gameService.allGames(leagueId).map(GameView::fromDomain).collect(Collectors.toList());
     }
 
@@ -65,8 +65,8 @@ public class GameApi {
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public GameView game(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") ObjectId leagueId,
-                        @ApiParam(required = true, value = "ID of the game being fetched") @PathParam("id") ObjectId id) {
+    public GameView game(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") UUID leagueId,
+                        @ApiParam(required = true, value = "ID of the game being fetched") @PathParam("id") UUID id) {
         return GameView.fromDomain(Optional.ofNullable(gameService.game(id)).orElseThrow(() -> new NotFoundException("No such game")));
     }
 
@@ -74,8 +74,8 @@ public class GameApi {
     @DELETE
     @Path("{id}")
     public void deleteGame(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization,
-                           @ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") ObjectId leagueId,
-                           @ApiParam(required = true, value = "ID of the game being deleted") @PathParam("id") ObjectId id) {
+                           @ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") UUID leagueId,
+                           @ApiParam(required = true, value = "ID of the game being deleted") @PathParam("id") UUID id) {
         gameService.delete(id);
     }
 

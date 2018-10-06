@@ -4,15 +4,16 @@ import org.bson.types.ObjectId;
 import solutions.desperate.glicko.domain.model.Game;
 
 import java.time.Instant;
+import java.util.UUID;
 
 public class GameView {
-    public final ObjectId id;
-    public final ObjectId whiteId;
-    public final ObjectId blackId;
+    public final UUID id;
+    public final UUID whiteId;
+    public final UUID blackId;
     public final String result;
     public final Instant timestamp;
 
-    private GameView(ObjectId id, ObjectId white, ObjectId black, String result, Instant timestamp) {
+    private GameView(UUID id, UUID white, UUID black, String result, Instant timestamp) {
         this.id = id;
         this.whiteId = white;
         this.blackId = black;

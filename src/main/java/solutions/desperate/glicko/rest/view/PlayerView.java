@@ -5,18 +5,19 @@ import solutions.desperate.glicko.domain.model.Game;
 import solutions.desperate.glicko.domain.model.Player;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PlayerView {
-    public final ObjectId id;
+    public final UUID id;
     public final String name;
     public final Double rating;
     public final Double ratingDeviation;
     public final Double volatility;
-    public final List<ObjectId> games;
+    public final List<UUID> games;
 
-    private PlayerView(ObjectId id, String name, double rating, double ratingDeviation, double volatility, List<ObjectId> games) {
+    private PlayerView(UUID id, String name, double rating, double ratingDeviation, double volatility, List<UUID> games) {
         this.id = id;
         this.name = name;
         this.rating = rating;

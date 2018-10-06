@@ -1,15 +1,16 @@
 package solutions.desperate.glicko.domain.model;
 
-import org.bson.types.ObjectId;
 import solutions.desperate.glicko.rest.command.AddLeague;
 
+import java.util.UUID;
+
 public class League {
-    private final ObjectId _id;
+    private final UUID id;
     private final String name;
     private final Settings settings;
 
-    public League(ObjectId id, String name, Settings settings) {
-        this._id = id;
+    public League(UUID id, String name, Settings settings) {
+        this.id = id;
         this.name = name;
         this.settings = settings;
     }
@@ -22,11 +23,11 @@ public class League {
         return settings;
     }
 
-    public ObjectId _id() {
-        return _id;
+    public UUID id() {
+        return id;
     }
 
     public static League fromCommand(AddLeague league) {
-        return new League(ObjectId.get(), league.name, Settings.fromDto(league.settings));
+        return new League(UUID.randomUUID(), league.name, Settings.fromDto(league.settings));
     }
 }

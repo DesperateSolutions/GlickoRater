@@ -6,6 +6,7 @@ import solutions.desperate.glicko.domain.service.glicko.Glicko;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.UUID;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
@@ -122,8 +123,8 @@ public class BigDecimalGlicko implements Glicko {
                           player.league());
     }
 
-    public Player defaultPlayer(String name, ObjectId league) {
-        return new Player(ObjectId.get(), name, DEFAULT_RATING.toPlainString(), DEFAULT_RD.toPlainString(), DEFAULT_VOLATILITY.toPlainString(), league);
+    public Player defaultPlayer(String name, UUID league) {
+        return new Player(UUID.randomUUID(), name, DEFAULT_RATING.toPlainString(), DEFAULT_RD.toPlainString(), DEFAULT_VOLATILITY.toPlainString(), league);
     }
 
     public Player glicko2(Player player1, Player player2, double result) {

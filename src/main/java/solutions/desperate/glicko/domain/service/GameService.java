@@ -1,18 +1,15 @@
 package solutions.desperate.glicko.domain.service;
 
-import org.bson.types.ObjectId;
 import org.codejargon.fluentjdbc.api.query.Mapper;
 import org.codejargon.fluentjdbc.api.query.Query;
 import solutions.desperate.glicko.domain.model.Game;
-import solutions.desperate.glicko.domain.model.League;
 import solutions.desperate.glicko.domain.model.Player;
 import solutions.desperate.glicko.domain.model.Settings;
 import solutions.desperate.glicko.domain.service.glicko.Glicko;
-import solutions.desperate.glicko.infrastructure.db.MongoDb;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
-import java.time.Instant;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 public class GameService {
@@ -29,7 +26,7 @@ public class GameService {
         this.leagueService = leagueService;
     }
 
-    public void addGame(Game game, ObjectId league) {
+    public void addGame(Game game, UUID league) {
         //Todo just fetch the settings directly, not like this
         Settings settings = leagueService.getLeague(league).settings();
         if (game.result() == 0 && !settings.drawAllowed()) {
@@ -59,20 +56,20 @@ public class GameService {
 
     }
 
-    public Game game(ObjectId id) {
+    public Game game(UUID id) {
         return query.select("SELECT FROM Game WHERE id = ?").params(id).singleResult(gameMapper());
 
     }
 
-    public Stream<Game> allGames(ObjectId leagueId) {
+    public Stream<Game> allGames(UUID leagueId) {
         return query.select("SELECT * FROM Game where league_id = ?").params(leagueId.toString()).listResult(gameMapper()).stream();
     }
 
-    public void delete(ObjectId id) {
+    public void delete(UUID id) {
         query.update("DELETE FROM Game WHERE id = ?").params(id.toString()).run();
     }
 
     private Mapper<Game> gameMapper() {
-        return rs -> new Game(new ObjectId(rs.getString("id")), new ObjectId(rs.getString("white_id")), new ObjectId(rs.getString("black_id")), rs.getString("written_result"), rs.getTimestamp("played_at").toInstant());
+        return rs -> new Game(UUID.fromString(rs.getString("id")), UUID.fromString(rs.getString("white_id")), UUID.fromString(rs.getString("black_id")), rs.getString("written_result"), rs.getTimestamp("played_at").toInstant());
     }
 }
