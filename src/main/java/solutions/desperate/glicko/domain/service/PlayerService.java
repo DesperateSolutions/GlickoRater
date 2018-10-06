@@ -1,6 +1,7 @@
 package solutions.desperate.glicko.domain.service;
 
 import org.bson.types.ObjectId;
+import solutions.desperate.glicko.domain.model.League;
 import solutions.desperate.glicko.domain.model.Player;
 import solutions.desperate.glicko.infrastructure.MongoDb;
 
@@ -15,6 +16,7 @@ public class PlayerService {
     public PlayerService(MongoDb mongoDb, LeagueService leagueService) {
         this.mongoDb = mongoDb;
         this.leagueService = leagueService;
+        updatePlayers();
     }
 
     public void addPlayer(Player player, ObjectId leagueId) {
@@ -42,5 +44,20 @@ public class PlayerService {
 
     public void deletePlayer(ObjectId id) {
         mongoDb.delete(Player.class, id);
+    }
+
+    //TODO remove me, only here to update player objects for relational bullshit
+    private void updatePlayers() {
+        Stream<League> leagues = leagueService.getAllLeagues();
+        leagues.forEach(league -> {
+            league.players()
+                  .forEach(player -> mongoDb.store(new Player(player.id(),
+                                                              player.name(),
+                                                              player.rating(),
+                                                              player.rd(),
+                                                              player.volatility(),
+                                                              player.games(),
+                                                              league._id())));
+        });
     }
 }
