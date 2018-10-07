@@ -33,5 +33,5 @@ create table api_user (
 create table Token (
     token varchar(255) PRIMARY KEY,
     username varchar(255) references api_user(username),
-    expiry timestamp
+    expiry int
 );

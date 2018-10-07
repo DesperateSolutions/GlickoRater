@@ -3,8 +3,6 @@ package solutions.desperate.glicko.domain.model;
 import solutions.desperate.glicko.infrastructure.CrackStationHashing;
 import solutions.desperate.glicko.rest.dto.UserDto;
 
-import java.util.UUID;
-
 public class User {
     private String username;
     private String password;

@@ -1,9 +1,7 @@
 package solutions.desperate.glicko.domain.model;
 
-import org.mongodb.morphia.annotations.Embedded;
 import solutions.desperate.glicko.rest.dto.SettingsDto;
 
-@Embedded
 public class Settings {
     private boolean drawAllowed;
     private int periodLength;

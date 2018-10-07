@@ -7,8 +7,12 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import solutions.desperate.glicko.boot.GlickoApp
 import solutions.desperate.glicko.domain.model.Token
+import solutions.desperate.glicko.domain.model.User
+import solutions.desperate.glicko.domain.service.AuthService
+import solutions.desperate.glicko.domain.service.UserService
 import solutions.desperate.glicko.infrastructure.Config
-import solutions.desperate.glicko.infrastructure.db.MongoDb
+import solutions.desperate.glicko.infrastructure.CrackStationHashing
+import solutions.desperate.glicko.rest.view.TokenView
 import spock.lang.Specification
 
 import javax.ws.rs.core.MediaType
@@ -16,7 +20,6 @@ import javax.ws.rs.core.MediaType
 class GlickoTestApp extends Specification {
     static GlickoApp app
     static Client client
-    static MockMongo mongoDb
     static UUID accessToken
 
     def setupSpec() {
@@ -29,20 +32,21 @@ class GlickoTestApp extends Specification {
         configMap.put("GLICKO_PASS", "test_pass")
         Injector injector = Guice.createInjector(new AppTestModule(new Config(configMap)))
         app = injector.getInstance(GlickoApp.class)
-        mongoDb = (MockMongo) injector.getInstance(MongoDb.class)
         app.startApp()
+
+        //TODO Move this so we just have a H2 Setup for this
+        AuthService auth = injector.getInstance(AuthService.class)
+        TokenView token = auth.doLogin("test_user", "test_pass")
+        accessToken = token.access_token
+
+
         addShutdownHook {app.terminate() }
     }
 
     def setup() {
-        mongoDb.cleanDB("testdb")
-        Token token = Token.createToken("testUser", 36000)
-        mongoDb.store(token)
-        accessToken = token.token()
     }
 
     def cleanupSpec() {
-        mongoDb.cleanDB("testdb")
     }
 
     class Client {

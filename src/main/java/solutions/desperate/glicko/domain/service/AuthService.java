@@ -28,14 +28,11 @@ public class AuthService {
 
 
     public TokenView doLogin(String username, String password) {
-        User user = userService.getUser(username);
+        User user = userService.getUser(username).orElseThrow(() -> new NotAuthorizedException("Failed auth"));
         try {
-            if (user != null && CrackStationHashing.verifyPassword(password, user.password())) {
-                Token token = getToken(username);
-                if(token == null) {
-                    token = Token.createToken(username, 3600);
-                    query.update("INSERT INTO token (token, username, expiry) VALUES (?, ?, ?)").params(token.token(), token.username(), token.expiry()).run();
-                }
+            if (CrackStationHashing.verifyPassword(password, user.password())) {
+                Token token = Token.createToken(username, 3600);
+                query.update("INSERT INTO token (token, username, expiry) VALUES (?, ?, ?)").params(token.token(), token.username(), token.expiry()).run();
                 return TokenView.fromDomain(token);
             }
             throw new NotAuthorizedException("Failed auth");
@@ -56,7 +53,7 @@ public class AuthService {
     }
 
     private Token getToken(String username) {
-        return query.select("SELECT * FROM token WHERE username = ?").params(username).singleResult(tokenMapper());
+        return query.select("SELECT * FROM token WHERE username = ?").params(username).firstResult(tokenMapper()).orElseThrow(() -> new NotAuthorizedException("Failed auth"));
     }
 
     private Mapper<Token> tokenMapper() {

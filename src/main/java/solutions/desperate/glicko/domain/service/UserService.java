@@ -5,6 +5,7 @@ import org.codejargon.fluentjdbc.api.query.Query;
 import solutions.desperate.glicko.domain.model.User;
 
 import javax.inject.Inject;
+import java.util.Optional;
 
 public class UserService {
     private final Query query;
@@ -22,8 +23,8 @@ public class UserService {
         query.update("DELETE FROM api_user WHERE username = ?").params(username).run();
     }
 
-    public User getUser(String username) {
-        return query.select("SELECT * FROM api_user WHERE username=?").params(username).singleResult(userMapper());
+    public Optional<User> getUser(String username) {
+        return query.select("SELECT * FROM api_user WHERE username=?").params(username).firstResult(userMapper());
     }
 
     private Mapper<User> userMapper() {

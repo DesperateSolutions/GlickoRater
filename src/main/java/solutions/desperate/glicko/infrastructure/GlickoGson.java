@@ -8,31 +8,15 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.bson.types.ObjectId;
 
 import java.lang.reflect.Type;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 
 public class GlickoGson {
-    public static Gson gson = new GsonBuilder().registerTypeAdapter(ObjectId.class, new ObjectIdAdapter())
-                                               .registerTypeAdapter(ZonedDateTime.class, new ZonedDateTimeAdapater())
+    public static Gson gson = new GsonBuilder().registerTypeAdapter(ZonedDateTime.class, new ZonedDateTimeAdapater())
                                                .registerTypeAdapter(Instant.class, new InstantAdapater())
                                                .create();
-
-    public static class ObjectIdAdapter implements JsonSerializer<ObjectId>, JsonDeserializer<ObjectId> {
-
-        @Override
-        public JsonElement serialize(ObjectId src, Type typeOfSrc,
-                                     JsonSerializationContext context) {
-            return context.serialize(src.toString());
-        }
-
-        @Override
-        public ObjectId deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return new ObjectId(json.getAsString());
-        }
-    }
 
     public static class ZonedDateTimeAdapater implements JsonSerializer<ZonedDateTime>, JsonDeserializer<ZonedDateTime> {
 

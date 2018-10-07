@@ -41,7 +41,6 @@ public class SwaggerApi {
         beanConfig.setResourcePackage(resourcePackage);
         beanConfig.setScannerId(resourcePackage);
         beanConfig.setConfigId(resourcePackage);
-        ModelConverters.getInstance().addConverter(new ObjectIdModel());
         beanConfig.setScan(true);
         return beanConfig.getSwagger();
     }

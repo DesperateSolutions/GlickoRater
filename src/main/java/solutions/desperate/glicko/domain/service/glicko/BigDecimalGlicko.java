@@ -1,8 +1,6 @@
 package solutions.desperate.glicko.domain.service.glicko;
 
-import org.bson.types.ObjectId;
 import solutions.desperate.glicko.domain.model.Player;
-import solutions.desperate.glicko.domain.service.glicko.Glicko;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -10,7 +8,10 @@ import java.util.UUID;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
-import static solutions.desperate.glicko.infrastructure.math.BigDecimalMath.*;
+import static solutions.desperate.glicko.infrastructure.math.BigDecimalMath.PI;
+import static solutions.desperate.glicko.infrastructure.math.BigDecimalMath.exp;
+import static solutions.desperate.glicko.infrastructure.math.BigDecimalMath.log;
+import static solutions.desperate.glicko.infrastructure.math.BigDecimalMath.sqrt;
 
 public class BigDecimalGlicko implements Glicko {
     private final static BigDecimal DEFAULT_RATING = BigDecimal.valueOf(1500D);

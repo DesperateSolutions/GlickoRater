@@ -1,6 +1,5 @@
 package solutions.desperate.glicko.rest.view;
 
-import org.bson.types.ObjectId;
 import solutions.desperate.glicko.domain.model.Game;
 import solutions.desperate.glicko.domain.model.Player;
 
