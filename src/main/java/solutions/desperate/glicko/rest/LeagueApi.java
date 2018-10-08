@@ -29,7 +29,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -70,7 +69,7 @@ public class LeagueApi {
         if (league.isNotValid()) {
             throw new BadRequestException("Invalid league");
         }
-        Optional.ofNullable(leagueService.getLeague(id)).orElseThrow(() -> new NotFoundException("No such league"));
+        leagueService.getLeague(id).orElseThrow(() -> new NotFoundException("No such league"));
         leagueService.updateLeague(id, league.name, Settings.fromDto(league.settings));
     }
 
@@ -90,8 +89,7 @@ public class LeagueApi {
     @Produces(MediaType.APPLICATION_JSON)
     public LeagueView league(@ApiParam(required = true, value = "ID of the league being fetched") @PathParam("id") UUID id) {
         return LeagueView.fromDomain(
-                Optional.ofNullable(leagueService.getLeague(id))
-                        .orElseThrow(() -> new NotFoundException("No such league")),
+                leagueService.getLeague(id).orElseThrow(() -> new NotFoundException("No such league")),
                 playerService.allPlayers(id),
                 Collections.emptyList()
         );

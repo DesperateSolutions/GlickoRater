@@ -31,8 +31,8 @@ public class PlayerService {
 
     public void updatePlayer(Player white, Player black) {
         query.transaction().inNoResult(() -> {
-            query.update("UPDATE Player SET rating = ? rd = ? volatility = ? WHERE id = ?").params(white.rating(), white.rd(), white.volatility(), white.id().toString()).run();
-            query.update("UPDATE Player SET rating = ? rd = ? volatility = ? WHERE id = ?").params(black.rating(), black.rd(), black.volatility(), black.id().toString()).run();
+            query.update("UPDATE Player SET rating = ?, rd = ?, volatility = ? WHERE id = ?").params(white.rating(), white.rd(), white.volatility(), white.id().toString()).run();
+            query.update("UPDATE Player SET rating = ?, rd = ?, volatility = ? WHERE id = ?").params(black.rating(), black.rd(), black.volatility(), black.id().toString()).run();
         });
     }
 

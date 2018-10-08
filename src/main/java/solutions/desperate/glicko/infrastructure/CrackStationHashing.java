@@ -35,7 +35,7 @@ import javax.xml.bind.DatatypeConverter;
 public class CrackStationHashing {
 
     @SuppressWarnings("serial")
-    static public class InvalidHashException extends Exception {
+    static public class InvalidHashException extends RuntimeException {
         InvalidHashException(String message) {
             super(message);
         }
@@ -45,7 +45,7 @@ public class CrackStationHashing {
     }
 
     @SuppressWarnings("serial")
-    static public class CannotPerformOperationException extends Exception {
+    static public class CannotPerformOperationException extends RuntimeException {
         CannotPerformOperationException(String message) {
             super(message);
         }

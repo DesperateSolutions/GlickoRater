@@ -9,6 +9,7 @@ import solutions.desperate.glicko.domain.service.glicko.Glicko;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -28,7 +29,7 @@ public class GameService {
 
     public void addGame(Game game, UUID league) {
         //Todo just fetch the settings directly, not like this
-        Settings settings = leagueService.getLeague(league).settings();
+        Settings settings = leagueService.getLeague(league).orElseThrow(() -> new NotFoundException("No league with id" + league)).settings();
         if (game.result() == 0 && !settings.drawAllowed()) {
             throw new BadRequestException("Draws are not allowed");
         }

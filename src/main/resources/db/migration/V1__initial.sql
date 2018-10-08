@@ -22,7 +22,8 @@ create table Game (
     black_id varchar(255) references Player(id),
     result int,
     written_result varchar(255),
-    played_at TIMESTAMP
+    played_at TIMESTAMP,
+    league_id varchar(255) references League(id)
 );
 
 create table api_user (

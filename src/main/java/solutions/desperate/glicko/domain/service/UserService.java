@@ -27,7 +27,11 @@ public class UserService {
         return query.select("SELECT * FROM api_user WHERE username=?").params(username).firstResult(userMapper());
     }
 
-    private Mapper<User> userMapper() {
+    private static Mapper<User> userMapper() {
         return rs -> new User(rs.getString("username"), rs.getString("password"));
+    }
+
+    private static Mapper<String> userMapper2() {
+        return rs -> rs.getString("schema_name");
     }
 }

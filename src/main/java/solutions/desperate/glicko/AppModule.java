@@ -6,6 +6,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.codejargon.fluentjdbc.api.FluentJdbcBuilder;
 import org.codejargon.fluentjdbc.api.query.Query;
+import org.flywaydb.core.Flyway;
 import solutions.desperate.glicko.domain.service.glicko.DoubleGlicko;
 import solutions.desperate.glicko.domain.service.glicko.Glicko;
 import solutions.desperate.glicko.infrastructure.Config;
@@ -13,21 +14,21 @@ import solutions.desperate.glicko.infrastructure.Config;
 import javax.sql.DataSource;
 
 public class AppModule extends AbstractModule {
-    private final Config config;
+    private final Config glickoConfig;
     private final DataSource dataSource;
 
     public AppModule(Config config) {
-        this.config = config;
+        this.glickoConfig = config;
         this.dataSource = dataSource();
     }
 
 
     @Override
     protected void configure() {
-        bind(Config.class).toInstance(config);
+        bind(Config.class).toInstance(glickoConfig);
         bind(Glicko.class).to(DoubleGlicko.class);
         bind(Query.class).toInstance(jdbc());
-        bind(DataSource.class).toInstance(dataSource);
+        bind(Flyway.class).toInstance(flyway());
     }
 
     @Singleton
@@ -36,11 +37,16 @@ public class AppModule extends AbstractModule {
     }
 
     @Singleton
+    private Flyway flyway() {
+        return Flyway.configure().dataSource(dataSource).load();
+    }
+
+    @Singleton
     private DataSource dataSource() {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:postgresql://docker:5432/postgres");
-        config.setUsername("root");
-        config.setPassword("admin");
+        config.setJdbcUrl(glickoConfig.dbAddress + "/postgres");
+        config.setUsername(glickoConfig.dbUser);
+        config.setPassword(glickoConfig.dbPass);
 
         return new HikariDataSource(config);
     }

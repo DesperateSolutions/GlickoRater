@@ -7,7 +7,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-@Api("Status rest")
+@Api(value = "Status rest", hidden = true)
 @Path("status")
 public class StatusApi {
 

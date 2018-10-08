@@ -43,19 +43,19 @@ dependencies {
     compile group: 'org.codejargon', name: 'fluentjdbc', version: '1.8.3'
     compile group: 'org.flywaydb', name: 'flyway-core', version: '5.2.0'
     compile group: 'com.zaxxer', name: 'HikariCP', version: '3.2.0'
-
     compile group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
-    
 
     //Because Oracle isn't very nice
     compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.11'
     compile group: 'javax.activation', name: 'activation', version: '1.1'
 
 
-    testCompile 'org.codehaus.groovy:groovy-all:2.3.11'
+    testCompile group: 'org.codehaus.groovy', name: 'groovy-all', version:'2.3.11'
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
     testCompile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.10.0'
+    testCompile group: 'com.h2database', name: 'h2', version: '1.4.197'
+
 
 }
 
@@ -69,7 +69,7 @@ shadowJar {
     dependsOn build
     baseName = 'glicko-rater'
     classifier = null
-    version = 1.0
+    version = 2.0
 }
 
 task downloadDependencies() {

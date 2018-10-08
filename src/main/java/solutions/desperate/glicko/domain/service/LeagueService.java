@@ -7,6 +7,7 @@ import solutions.desperate.glicko.domain.model.Settings;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class LeagueService {
@@ -32,8 +33,8 @@ public class LeagueService {
         return query.select("SELECT * FROM League").listResult(leagueMapper());
     }
 
-    public League getLeague(UUID id) {
-        return query.select("SELECT * FROM League WHERE id = ?").params(id.toString()).singleResult(leagueMapper());
+    public Optional<League> getLeague(UUID id) {
+        return query.select("SELECT * FROM League WHERE id = ?").params(id.toString()).firstResult(leagueMapper());
     }
 
     public void updateLeague(UUID id, String name, Settings settings) {
