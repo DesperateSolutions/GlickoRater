@@ -52,10 +52,6 @@ public class AuthService {
         return query.select("SELECT * FROM token WHERE token = ?").params(token.toString()).firstResult(tokenMapper());
     }
 
-    private Token getToken(String username) {
-        return query.select("SELECT * FROM token WHERE username = ?").params(username).firstResult(tokenMapper()).orElseThrow(() -> new NotAuthorizedException("Failed auth"));
-    }
-
     private Mapper<Token> tokenMapper() {
         return rs -> new Token(rs.getString("username"), UUID.fromString(rs.getString("token")), rs.getInt("expiry"));
     }

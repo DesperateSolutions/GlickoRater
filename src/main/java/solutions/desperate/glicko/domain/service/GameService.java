@@ -10,6 +10,7 @@ import solutions.desperate.glicko.domain.service.glicko.Glicko;
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -57,8 +58,8 @@ public class GameService {
 
     }
 
-    public Game game(UUID id) {
-        return query.select("SELECT FROM Game WHERE id = ?").params(id).singleResult(gameMapper());
+    public Optional<Game> game(UUID id) {
+        return query.select("SELECT FROM Game WHERE id = ?").params(id).firstResult(gameMapper());
 
     }
 

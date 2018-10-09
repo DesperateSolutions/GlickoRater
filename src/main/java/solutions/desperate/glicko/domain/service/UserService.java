@@ -30,8 +30,4 @@ public class UserService {
     private static Mapper<User> userMapper() {
         return rs -> new User(rs.getString("username"), rs.getString("password"));
     }
-
-    private static Mapper<String> userMapper2() {
-        return rs -> rs.getString("schema_name");
-    }
 }

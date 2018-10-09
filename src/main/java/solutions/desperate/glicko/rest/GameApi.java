@@ -67,7 +67,7 @@ public class GameApi {
     @Produces(MediaType.APPLICATION_JSON)
     public GameView game(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") UUID leagueId,
                         @ApiParam(required = true, value = "ID of the game being fetched") @PathParam("id") UUID id) {
-        return GameView.fromDomain(Optional.ofNullable(gameService.game(id)).orElseThrow(() -> new NotFoundException("No such game")));
+        return GameView.fromDomain(gameService.game(id).orElseThrow(() -> new NotFoundException("No such game")));
     }
 
     @ApiOperation(value = "Delete a game from a league. Important to note that currently this does not roll back the rating", authorizations = @Authorization("bearer"))

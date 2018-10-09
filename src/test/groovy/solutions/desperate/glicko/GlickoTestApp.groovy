@@ -8,17 +8,13 @@ import okhttp3.RequestBody
 import org.codejargon.fluentjdbc.api.query.Query
 import org.flywaydb.core.Flyway
 import solutions.desperate.glicko.boot.GlickoApp
-import solutions.desperate.glicko.domain.model.User
 import solutions.desperate.glicko.domain.service.AuthService
-import solutions.desperate.glicko.domain.service.UserService
 import solutions.desperate.glicko.infrastructure.Config
 import solutions.desperate.glicko.infrastructure.CrackStationHashing
 import solutions.desperate.glicko.rest.view.TokenView
 import spock.lang.Specification
 
 import javax.ws.rs.core.MediaType
-
-import org.codejargon.fluentjdbc.api.mapper.Mappers
 
 class GlickoTestApp extends Specification {
     static GlickoApp app
