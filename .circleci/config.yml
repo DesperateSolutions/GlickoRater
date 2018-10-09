@@ -23,12 +23,12 @@ jobs:
           path: ./build/test-results/
 
       - store_artifacts:
-          path: ./build/libs/glicko-rater-1.0.jar
-          prefix: jar
+          path: ./build/libs/
+          prefix: libs
 
       - persist_to_workspace:
-          root: ./build/libs
-          paths: glicko-rater-1.0.jar
+          root: ./build/libs/
+          paths: .
 
       - save_cache:
           paths:
@@ -48,7 +48,7 @@ jobs:
       - checkout
 
       - attach_workspace:
-          at: ./build/libs
+          at: ./build/
 
       - run:
           name: "Publish Release on GitHub"
