@@ -1,9 +1,9 @@
 package solutions.desperate.glicko.domain.service.glicko;
 
-import org.bson.types.ObjectId;
 import solutions.desperate.glicko.domain.model.Player;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public class DoubleGlicko implements Glicko {
     private final static double DEFAULT_RATING = 1500D;
@@ -102,8 +102,9 @@ public class DoubleGlicko implements Glicko {
         return rating + (Math.pow(rdMarked, 2) * g * (result - e));
     }
 
-    public Player defaultPlayer(String name, ObjectId league) {
-        return new Player(name,
+    public Player defaultPlayer(String name, UUID league) {
+        return new Player(UUID.randomUUID(),
+                          name,
                           String.valueOf(DEFAULT_RATING),
                           String.valueOf(DEFAULT_RD),
                           String.valueOf(DEFAULT_VOLATILITY),
@@ -111,7 +112,8 @@ public class DoubleGlicko implements Glicko {
     }
 
     public Player noGamesRd(Player player) {
-        return new Player(player.name(),
+        return new Player(player.id(),
+                          player.name(),
                           player.rating(),
                           BigDecimal.valueOf(SCALE * preRatingRd(convertRdToGlicko2(Double.parseDouble(player.rd())), Double.parseDouble(player.volatility()))).toPlainString(),
                           player.volatility(),
@@ -143,7 +145,6 @@ public class DoubleGlicko implements Glicko {
                           String.valueOf(DEFAULT_RATING + (SCALE * ratingMarked)),
                           String.valueOf(BigDecimal.valueOf(SCALE * rdMarked)),
                           String.valueOf(BigDecimal.valueOf(volatilityMarked)),
-                          player1.games(),
                           player1.league());
     }
 }

@@ -1,15 +1,17 @@
 package solutions.desperate.glicko.domain.service.glicko;
 
-import org.bson.types.ObjectId;
 import solutions.desperate.glicko.domain.model.Player;
-import solutions.desperate.glicko.domain.service.glicko.Glicko;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.UUID;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
-import static solutions.desperate.glicko.infrastructure.math.BigDecimalMath.*;
+import static solutions.desperate.glicko.infrastructure.math.BigDecimalMath.PI;
+import static solutions.desperate.glicko.infrastructure.math.BigDecimalMath.exp;
+import static solutions.desperate.glicko.infrastructure.math.BigDecimalMath.log;
+import static solutions.desperate.glicko.infrastructure.math.BigDecimalMath.sqrt;
 
 public class BigDecimalGlicko implements Glicko {
     private final static BigDecimal DEFAULT_RATING = BigDecimal.valueOf(1500D);
@@ -114,13 +116,16 @@ public class BigDecimalGlicko implements Glicko {
     public Player noGamesRd(Player player) {
         BigDecimal rd = new BigDecimal(player.rd());
         BigDecimal volatility = new BigDecimal(player.volatility());
-        return new Player(player.name(), player.rating(),
+        return new Player(player.id(),
+                          player.name(),
+                          player.rating(),
                           SCALE.multiply(preRatingRd(convertRdToGlicko2(rd), volatility)).toPlainString(),
-                          player.volatility(), player.league());
+                          player.volatility(),
+                          player.league());
     }
 
-    public Player defaultPlayer(String name, ObjectId league) {
-        return new Player(name, DEFAULT_RATING.toPlainString(), DEFAULT_RD.toPlainString(), DEFAULT_VOLATILITY.toPlainString(), league);
+    public Player defaultPlayer(String name, UUID league) {
+        return new Player(UUID.randomUUID(), name, DEFAULT_RATING.toPlainString(), DEFAULT_RD.toPlainString(), DEFAULT_VOLATILITY.toPlainString(), league);
     }
 
     public Player glicko2(Player player1, Player player2, double result) {
@@ -148,7 +153,6 @@ public class BigDecimalGlicko implements Glicko {
                           DEFAULT_RATING.add(SCALE.multiply(ratingMarked)).toPlainString(),
                           SCALE.multiply(rdMarked).toPlainString(),
                           volatilityMarked.toPlainString(),
-                          player1.games(),
                           player1.league());
     }
 }

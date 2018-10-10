@@ -5,10 +5,13 @@ import com.google.inject.Injector
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
+import org.codejargon.fluentjdbc.api.query.Query
+import org.flywaydb.core.Flyway
 import solutions.desperate.glicko.boot.GlickoApp
-import solutions.desperate.glicko.domain.model.Token
+import solutions.desperate.glicko.domain.service.AuthService
 import solutions.desperate.glicko.infrastructure.Config
-import solutions.desperate.glicko.infrastructure.MongoDb
+import solutions.desperate.glicko.infrastructure.CrackStationHashing
+import solutions.desperate.glicko.rest.view.TokenView
 import spock.lang.Specification
 
 import javax.ws.rs.core.MediaType
@@ -16,8 +19,10 @@ import javax.ws.rs.core.MediaType
 class GlickoTestApp extends Specification {
     static GlickoApp app
     static Client client
-    static MockMongo mongoDb
     static UUID accessToken
+    static Query query
+    static AuthService auth
+    static Flyway flyway
 
     def setupSpec() {
         int port = new Random().nextInt(10000) + 10000
@@ -27,22 +32,33 @@ class GlickoTestApp extends Specification {
         configMap.put("GLICKO_PORT", port.toString())
         configMap.put("GLICKO_USER", "test_user")
         configMap.put("GLICKO_PASS", "test_pass")
+        configMap.put("DB_ADDR", "jdbc:h2:~/test")
+        configMap.put("DB_USER", "test")
+        configMap.put("DB_PASS", "test")
         Injector injector = Guice.createInjector(new AppTestModule(new Config(configMap)))
         app = injector.getInstance(GlickoApp.class)
-        mongoDb = (MockMongo) injector.getInstance(MongoDb.class)
-        app.startApp()
+        query = injector.getInstance(Query.class)
+        auth = injector.getInstance(AuthService.class)
+        flyway = injector.getInstance(Flyway.class)
+
+        app.startApi()
+
         addShutdownHook {app.terminate() }
     }
 
     def setup() {
-        mongoDb.cleanDB("testdb")
-        Token token = Token.createToken("testUser", 36000)
-        mongoDb.store(token)
-        accessToken = token.token()
+        setupDB()
+        TokenView token = auth.doLogin("test_user", "test_pass")
+        accessToken = token.access_token
+    }
+
+    def setupDB() {
+        query.update("DROP ALL OBJECTS").run()
+        flyway.migrate()
+        query.update("INSERT INTO api_user (username, password) VALUES (?, ?)").params("test_user", CrackStationHashing.createHash("test_pass")).run()
     }
 
     def cleanupSpec() {
-        mongoDb.cleanDB("testdb")
     }
 
     class Client {

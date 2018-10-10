@@ -1,63 +1,62 @@
 package solutions.desperate.glicko.domain.service;
 
-import org.bson.types.ObjectId;
-import solutions.desperate.glicko.domain.model.League;
+import org.codejargon.fluentjdbc.api.query.Mapper;
+import org.codejargon.fluentjdbc.api.query.Query;
 import solutions.desperate.glicko.domain.model.Player;
-import solutions.desperate.glicko.infrastructure.MongoDb;
 
 import javax.inject.Inject;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 public class PlayerService {
-    private final MongoDb mongoDb;
-    private final LeagueService leagueService;
+
+    private final Query query;
 
     @Inject
-    public PlayerService(MongoDb mongoDb, LeagueService leagueService) {
-        this.mongoDb = mongoDb;
-        this.leagueService = leagueService;
-        updatePlayers();
+    public PlayerService(Query query) {
+        this.query = query;
     }
 
-    public void addPlayer(Player player, ObjectId leagueId) {
-        mongoDb.store(player);
-        leagueService.addPlayerToLeague(player, leagueId);
+    public void addPlayer(Player player, UUID leagueId) {
+        query.update("INSERT INTO Player (id, name, rating, rd, volatility, league_id) VALUES (?, ?, ?, ?, ?, ?)")
+             .params(player.id().toString(), player.name(), player.rating(), player.rd(), player.volatility(), leagueId.toString())
+             .run();
     }
 
-    public void updatePlayer(ObjectId id, String name) {
-        mongoDb.updateSingleField(Player.class, id, "name", name);
+    public void updatePlayer(UUID id, String name) {
+        query.update("UPDATE Player SET name = ? WHERE id = ?")
+             .params(name, id)
+             .run();
     }
 
-    //TODO Make this update fields and not the whole objects
     public void updatePlayer(Player white, Player black) {
-        mongoDb.store(white);
-        mongoDb.store(black);
-    }
-
-    public Stream<Player> allPlayers(ObjectId leagueId) {
-        return leagueService.getLeague(leagueId).players().stream();
-    }
-
-    public Player player(ObjectId id) {
-        return mongoDb.getObjectById(Player.class, id);
-    }
-
-    public void deletePlayer(ObjectId id) {
-        mongoDb.delete(Player.class, id);
-    }
-
-    //TODO remove me, only here to update player objects for relational bullshit
-    private void updatePlayers() {
-        Stream<League> leagues = leagueService.getAllLeagues();
-        leagues.forEach(league -> {
-            league.players()
-                  .forEach(player -> mongoDb.store(new Player(player.id(),
-                                                              player.name(),
-                                                              player.rating(),
-                                                              player.rd(),
-                                                              player.volatility(),
-                                                              player.games(),
-                                                              league._id())));
+        query.transaction().inNoResult(() -> {
+            query.update("UPDATE Player SET rating = ?, rd = ?, volatility = ? WHERE id = ?").params(white.rating(), white.rd(), white.volatility(), white.id().toString()).run();
+            query.update("UPDATE Player SET rating = ?, rd = ?, volatility = ? WHERE id = ?").params(black.rating(), black.rd(), black.volatility(), black.id().toString()).run();
         });
+    }
+
+    public Stream<Player> allPlayers(UUID leagueId) {
+        return query.select("SELECT * FROM Player WHERE league_id = ?").params(leagueId.toString()).listResult(playerMapper()).stream();
+    }
+
+
+    public Player player(UUID id) {
+        return query.select("SELECT * FROM Player WHERE id = ?").params(id.toString()).singleResult(playerMapper());
+    }
+
+    public void deletePlayer(UUID id) {
+        query.update("DELETE FROM Player WHERE id = ?").params(id).run();
+    }
+
+    private Mapper<Player> playerMapper() {
+        return rs -> new Player(
+                UUID.fromString(rs.getString("id")),
+                rs.getString("name"),
+                rs.getString("rating"),
+                rs.getString("rd"),
+                rs.getString("volatility"),
+                UUID.fromString(rs.getString("league_id"))
+        );
     }
 }

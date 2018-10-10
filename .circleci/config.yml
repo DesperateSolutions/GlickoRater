@@ -1,40 +1,6 @@
 version: 2
 
 jobs:
-  test:
-    docker:
-      - image: circleci/openjdk:11
-      - image: mongo:4
-    steps:
-      - checkout
-
-      - restore_cache:
-          keys:
-            - gradle-wrapper-{{ .Environment.CACHE_VERSION }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
-
-      - restore_cache:
-          keys:
-            - gradle-cache-{{ .Environment.CACHE_VERSION }}-{{ checksum "build.gradle" }}
-
-      - run:
-          name: Run tests
-          environment:
-            MONGODB_ADDR: 127.0.0.1
-          command: ./gradlew test
-
-      - store_test_results:
-          path: ./build/test-results/
-
-      - save_cache:
-          paths:
-            - ~/.gradle/wrapper/
-          key: gradle-wrapper-{{ .Environment.CACHE_VERSION }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
-
-      - save_cache:
-          paths:
-            - ~/.gradle/caches/
-          key: gradle-cache-{{ .Environment.CACHE_VERSION }}-{{ checksum "build.gradle" }}
-
   build:
     docker:
       - image: circleci/openjdk:11
@@ -51,15 +17,18 @@ jobs:
 
       - run:
           name: Build Project
-          command: ./gradlew --max-workers 2 --continue clean shadowJar -x test --info
+          command: ./gradlew --max-workers 2 --continue clean shadowJar --info
+
+      - store_test_results:
+          path: ./build/test-results/
 
       - store_artifacts:
-          path: ./build/libs/glicko-rater-1.0.jar
-          prefix: jar
+          path: ./build/libs/
+          prefix: libs
 
       - persist_to_workspace:
-          root: ./build/libs
-          paths: glicko-rater-1.0.jar
+          root: ./build/libs/
+          paths: .
 
       - save_cache:
           paths:
@@ -79,7 +48,7 @@ jobs:
       - checkout
 
       - attach_workspace:
-          at: ./build/libs
+          at: ./build/
 
       - run:
           name: "Publish Release on GitHub"
@@ -112,7 +81,6 @@ workflows:
   version: 2
   main:
     jobs:
-      - test
       - build:
           filters:
             tags:
@@ -120,7 +88,6 @@ workflows:
       - publish-to-github:
           requires:
             - build
-            - test
           filters:
             branches:
               only: master
@@ -129,7 +96,6 @@ workflows:
       - publish-to-docker-hub:
           requires:
             - build
-            - test
           filters:
             branches:
               only: master

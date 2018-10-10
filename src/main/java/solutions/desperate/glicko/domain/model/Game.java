@@ -1,30 +1,22 @@
 package solutions.desperate.glicko.domain.model;
 
-import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Entity;
-import org.mongodb.morphia.annotations.Id;
 import solutions.desperate.glicko.rest.command.GameCommand;
 
 import javax.ws.rs.BadRequestException;
 import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 
-@Entity
 public class Game {
-    @Id
-    private ObjectId _id;
-    private ObjectId white;
-    private ObjectId black;
-    private int result;
-    private String writtenResult;
-    private Instant timestamp;
+    private final UUID id;
+    private final UUID white;
+    private final UUID black;
+    private final int result;
+    private final String writtenResult;
+    private final Instant timestamp;
 
-    private Game() {
-        //Morphia
-    }
-
-    private Game(ObjectId id, ObjectId white, ObjectId black, String writtenResult, Instant timestamp) {
-        this._id = id;
+    public Game(UUID id, UUID white, UUID black, String writtenResult, Instant timestamp) {
+        this.id = id;
         this.white = white;
         this.black = black;
         this.result = resultToInt(writtenResult);
@@ -32,15 +24,15 @@ public class Game {
         this.timestamp = timestamp;
     }
 
-    public ObjectId id() {
-        return _id;
+    public UUID id() {
+        return id;
     }
 
-    public ObjectId white() {
+    public UUID white() {
         return white;
     }
 
-    public ObjectId black() {
+    public UUID black() {
         return black;
     }
 
@@ -58,7 +50,7 @@ public class Game {
 
     public static Game fromCommand(GameCommand gameCommand) {
         return new Game(
-                ObjectId.get(),
+                UUID.randomUUID(),
                 gameCommand.whiteId,
                 gameCommand.blackId,
                 gameCommand.result,

@@ -6,6 +6,8 @@ import java.util.Optional;
 
 public class Config {
     public final String dbAddress;
+    public final String dbUser;
+    public final String dbPass;
     public final int port;
     public final String defaultUser;
     public final String defaultPass;
@@ -13,16 +15,11 @@ public class Config {
 
     //Might want a better way to start the app with. Port is there for the tests
     public Config(Map<String, String> configMap){
-        String dbhost = Optional.ofNullable(configMap.get("MONGODB_ADDR")).orElse("localhost");
-        String dbPort = Optional.ofNullable(configMap.get("MONGODB_PORT")).orElse("27017");
-        String user = configMap.get("MONGODB_USER");
-        String pass = configMap.get("MONGODB_PASS");
+        dbAddress = Optional.ofNullable(configMap.get("DB_ADDR")).orElse("jdbc:postgresql://localhost:5432");
 
-        if((user == null || pass == null) || (user.isEmpty() || pass.isEmpty())) {
-            dbAddress = String.format("mongodb://%s:%s", dbhost, dbPort);
-        } else {
-            dbAddress = String.format("mongodb://%s:%s@%s:%s", user, pass, dbhost, dbPort);
-        }
+        dbUser = configMap.get("DB_USER");
+        dbPass = configMap.get("DB_PASS");
+
         this.port = Optional.ofNullable(configMap.get("GLICKO_PORT")).map(Integer::parseInt).orElse(3000);
         defaultUser = Optional.ofNullable(configMap.get("GLICKO_USER")).orElseThrow(() -> new RuntimeException("No default user supplied"));
         defaultPass = Optional.ofNullable(configMap.get("GLICKO_PASS")).orElseThrow(() -> new RuntimeException("No default pass supplied"));

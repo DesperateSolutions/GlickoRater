@@ -1,27 +1,52 @@
 package solutions.desperate.glicko
 
 import com.google.inject.AbstractModule
-import solutions.desperate.glicko.domain.model.League
+import com.google.inject.Singleton
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
+import org.codejargon.fluentjdbc.api.FluentJdbcBuilder
+import org.codejargon.fluentjdbc.api.query.Query
+import org.flywaydb.core.Flyway
 import solutions.desperate.glicko.domain.service.glicko.DoubleGlicko
 import solutions.desperate.glicko.domain.service.glicko.Glicko
 import solutions.desperate.glicko.infrastructure.Config
-import solutions.desperate.glicko.infrastructure.MongoDb
+
+import javax.sql.DataSource
 
 class AppTestModule extends AbstractModule {
-    private final Config config
+    private final Config glickoConfig
+    private final DataSource dataSource
 
     AppTestModule(Config config) {
-        this.config = config
+        this.glickoConfig = config
+        this.dataSource = dataSource()
     }
 
     @Override
     protected void configure() {
         bind(Glicko.class).to(DoubleGlicko.class)
-        bind(Config.class).toInstance(config)
-        bind(MongoDb.class).toInstance(mongodb())
+        bind(Config.class).toInstance(glickoConfig)
+        bind(Query.class).toInstance(jdbc())
+        bind(Flyway.class).toInstance(flyway())
     }
 
-    private MongoDb mongodb() {
-        return new MockMongo(config, League.class.getPackage().getName(), "testdb")
+    @Singleton
+    private Query jdbc() {
+        return new FluentJdbcBuilder().connectionProvider(dataSource).build().query()
+    }
+
+    @Singleton
+    private Flyway flyway() {
+        return Flyway.configure().dataSource(dataSource).load()
+    }
+
+    @Singleton
+    private DataSource dataSource() {
+        HikariConfig config = new HikariConfig()
+        config.setJdbcUrl(glickoConfig.dbAddress)
+        config.setUsername(glickoConfig.dbUser)
+        config.setPassword(glickoConfig.dbPass)
+
+        return new HikariDataSource(config)
     }
 }
