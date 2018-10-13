@@ -19,6 +19,7 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.EncodingFilter;
 import org.glassfish.jersey.servlet.ServletContainer;
+import solutions.desperate.glicko.infrastructure.ResponseExceptionMapper;
 import solutions.desperate.glicko.rest.*;
 import solutions.desperate.glicko.infrastructure.AccessLog;
 import solutions.desperate.glicko.infrastructure.GsonJerseyProvider;
@@ -27,6 +28,7 @@ import solutions.desperate.glicko.infrastructure.HeaderFilter;
 import javax.inject.Inject;
 import javax.servlet.DispatcherType;
 import javax.ws.rs.core.Application;
+import javax.ws.rs.ext.ExceptionMapper;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
@@ -77,11 +79,11 @@ public class ApiStarter {
 
     private void removeVersionTag(Server server) {
         Arrays.stream(server.getConnectors())
-                .forEach(connector -> connector.getConnectionFactories()
-                        .stream()
-                        .filter(f -> f instanceof HttpConnectionFactory)
-                        .forEach(f -> ((HttpConnectionFactory) f).getHttpConfiguration()
-                                .setSendServerVersion(false)));
+              .forEach(connector -> connector.getConnectionFactories()
+                                             .stream()
+                                             .filter(f -> f instanceof HttpConnectionFactory)
+                                             .forEach(f -> ((HttpConnectionFactory) f).getHttpConfiguration()
+                                                                                      .setSendServerVersion(false)));
     }
 
     private QueuedThreadPool threadPool() {
@@ -130,7 +132,11 @@ public class ApiStarter {
             public Set<Object> getSingletons() {
                 return endpoints;
             }
-        }).register(GsonJerseyProvider.class).register(SwaggerSerializers.class).register(HeaderFilter.class);
+        })
+                                                      .register(GsonJerseyProvider.class)
+                                                      .register(SwaggerSerializers.class)
+                                                      .register(ResponseExceptionMapper.class)
+                                                      .register(HeaderFilter.class);
         EncodingFilter.enableFor(resourceConfig);
 
         return resourceConfig;

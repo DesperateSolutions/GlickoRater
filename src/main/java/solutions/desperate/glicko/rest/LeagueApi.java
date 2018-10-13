@@ -53,7 +53,7 @@ public class LeagueApi {
     public void addLeague(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization,
                           AddLeague league) {
         authService.doAuth(AuthHeader.getAuthString(authorization));
-        if (league.isNotValid()) {
+        if (league == null || league.isNotValid()) {
             throw new BadRequestException("Invalid league");
         }
         leagueService.addLeague(League.fromCommand(league));

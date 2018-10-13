@@ -10,6 +10,7 @@ import org.flywaydb.core.Flyway;
 import solutions.desperate.glicko.domain.service.glicko.DoubleGlicko;
 import solutions.desperate.glicko.domain.service.glicko.Glicko;
 import solutions.desperate.glicko.infrastructure.Config;
+import solutions.desperate.glicko.infrastructure.ResponseExceptionMapper;
 
 import javax.sql.DataSource;
 

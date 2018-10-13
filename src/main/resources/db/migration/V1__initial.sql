@@ -1,6 +1,6 @@
 create table League (
     id varchar(255) PRIMARY KEY,
-    name varchar(255),
+    name varchar(255) UNIQUE,
     draw_allowed boolean,
     period_length int,
     scored_results boolean
