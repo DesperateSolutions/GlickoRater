@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-docker run --name glicko-mongo --network=glickorater -p 27017:27017 -d mongo
+docker run --name glicko-postgres --network=glickorater -p 5432:5432 -d postgres

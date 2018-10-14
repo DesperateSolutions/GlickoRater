@@ -51,6 +51,11 @@ public class AuthService {
         }
     }
 
+    public void logout(UUID authorization) {
+        Token token = getToken(authorization).orElseThrow(() -> new NotAuthorizedException("Not authorized"));
+        query.update("DELETE FROM token WHERE token = ?").params(token.token().toString()).run();
+    }
+
     private Optional<Token> getToken(UUID token) {
         return query.select("SELECT * FROM token WHERE token = ?").params(token.toString()).firstResult(tokenMapper());
     }

@@ -3,6 +3,7 @@ package solutions.desperate.glicko.rest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import solutions.desperate.glicko.rest.dto.AuthHeader;
 import solutions.desperate.glicko.rest.view.TokenView;
 import solutions.desperate.glicko.domain.service.AuthService;
 
@@ -10,6 +11,7 @@ import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -37,5 +39,12 @@ public class TokenApi {
             throw new BadRequestException("unsupported_grant_type");
         }
         return authService.doLogin(username, password);
+    }
+
+    @ApiOperation(value = "Log out user")
+    @POST
+    @Consumes(MediaType.TEXT_PLAIN)
+    public void logout(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization) {
+        authService.logout(AuthHeader.getAuthString(authorization));
     }
 }
