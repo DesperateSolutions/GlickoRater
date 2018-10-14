@@ -1,4 +1,4 @@
-create table League (
+create table league (
     id varchar(255) PRIMARY KEY,
     name varchar(255) UNIQUE,
     draw_allowed boolean,
@@ -6,7 +6,7 @@ create table League (
     scored_results boolean
 );
 
-create table Player (
+create table player (
     id varchar(255) PRIMARY KEY,
     name varchar(255),
     rating varchar(255),
@@ -16,7 +16,7 @@ create table Player (
     UNIQUE (name, league_id)
 );
 
-create table Game (
+create table game (
     id varchar(255) PRIMARY KEY,
     white_id varchar(255) references Player(id),
     black_id varchar(255) references Player(id),
@@ -31,8 +31,8 @@ create table api_user (
     password varchar(255)
 );
 
-create table Token (
+create table token (
     token varchar(255) PRIMARY KEY,
     username varchar(255) references api_user(username),
-    expiry int
+    expiry TIMESTAMP
 );

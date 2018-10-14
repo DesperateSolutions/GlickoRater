@@ -12,6 +12,7 @@ import solutions.desperate.glicko.rest.view.TokenView;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotAuthorizedException;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,8 +32,10 @@ public class AuthService {
         User user = userService.getUser(username).orElseThrow(() -> new NotAuthorizedException("Failed auth"));
         try {
             if (CrackStationHashing.verifyPassword(password, user.password())) {
-                Token token = Token.createToken(username, 3600);
-                query.update("INSERT INTO token (token, username, expiry) VALUES (?, ?, ?)").params(token.token(), token.username(), token.expiry()).run();
+                Token token = Token.createToken(username, Instant.now().plusSeconds(3600));
+                query.update("INSERT INTO token (token, username, expiry) VALUES (?, ?, ?)")
+                     .params(token.token(), token.username(), token.expiryTimestamp())
+                     .run();
                 return TokenView.fromDomain(token);
             }
             throw new NotAuthorizedException("Failed auth");
@@ -42,7 +45,7 @@ public class AuthService {
     }
 
     public void doAuth(UUID token) {
-        if(!getToken(token).isPresent()) {
+        if (!getToken(token).isPresent()) {
             logger.info("Failed to find token in db");
             throw new NotAuthorizedException("Not authorized");
         }
@@ -53,6 +56,6 @@ public class AuthService {
     }
 
     private Mapper<Token> tokenMapper() {
-        return rs -> new Token(rs.getString("username"), UUID.fromString(rs.getString("token")), rs.getInt("expiry"));
+        return rs -> new Token(rs.getString("username"), UUID.fromString(rs.getString("token")), rs.getTimestamp("expiry").toInstant());
     }
 }

@@ -26,7 +26,6 @@ public class ResponseExceptionMapper implements ExceptionMapper<Throwable> {
     }
 
     private ExceptionResponse toExceptionResponse(Throwable e) {
-        System.out.println("Hello from exception");
         if(e instanceof FluentJdbcSqlException && e.getCause() instanceof PSQLException) {
           PSQLException sqlException = (PSQLException) e.getCause();
           if(sqlException.getSQLState().equals("23505")) { //23505 is the code from Postgres for duplicates

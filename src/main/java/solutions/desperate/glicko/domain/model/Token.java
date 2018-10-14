@@ -2,18 +2,17 @@ package solutions.desperate.glicko.domain.model;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Date;
 import java.util.UUID;
 
 public class Token {
     private String username;
     private UUID token;
-    private Date expiry;
+    private Instant expiry;
 
-    public Token(String username, UUID token, int expiry) {
+    public Token(String username, UUID token, Instant expiry) {
         this.username = username;
         this.token = token;
-        this.expiry = Date.from(Instant.now().plusSeconds(expiry));
+        this.expiry = expiry;
     }
 
     public UUID token() {
@@ -25,10 +24,14 @@ public class Token {
     }
 
     public long expiry() {
-        return Duration.between(Instant.now(), expiry.toInstant()).getSeconds();
+        return Duration.between(Instant.now(), expiry).getSeconds();
     }
 
-    public static Token createToken(String username, int expiry) {
+    public Instant expiryTimestamp() {
+        return expiry;
+    }
+
+    public static Token createToken(String username, Instant expiry) {
         return new Token(username, UUID.randomUUID(), expiry);
     }
 }
