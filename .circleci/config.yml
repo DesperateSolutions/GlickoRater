@@ -26,6 +26,10 @@ jobs:
           path: ./build/libs/
           prefix: libs
 
+      - run:
+          name: Copy libs to workspace
+          command: mkdir -p ./ws && cp -r ./build ./ws
+
       - persist_to_workspace:
           root: ./ws/
           paths: ./build/libs/
