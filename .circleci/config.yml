@@ -27,8 +27,8 @@ jobs:
           prefix: libs
 
       - persist_to_workspace:
-          root: ./build/libs/
-          paths: .
+          root: ./ws/
+          paths: ./build/libs/
 
       - save_cache:
           paths:
@@ -48,13 +48,13 @@ jobs:
       - checkout
 
       - attach_workspace:
-          at: ./build/
+          at: ./ws/
 
       - run:
           name: "Publish Release on GitHub"
           command: |
             VERSION=$(git describe --tags)
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./build/libs
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./ws/build/libs
 
   publish-to-docker-hub:
     docker:
@@ -64,7 +64,7 @@ jobs:
       - checkout
 
       - attach_workspace:
-          at: ./build/libs
+          at: ./ws/
 
       - setup_remote_docker:
           docker_layer_caching: true
@@ -73,6 +73,7 @@ jobs:
           name: Build and push docker image
           command: |
             VERSION=$(git describe --tags)
+            cp -r ./ws/build ./build
             docker build --tag desp/glickorater:${VERSION} .
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
             docker push desp/glickorater:${VERSION}
