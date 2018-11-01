@@ -1,38 +1,38 @@
 create table league (
-    id varchar(255) PRIMARY KEY,
-    name varchar(255) UNIQUE,
-    draw_allowed boolean,
+    id varchar(255) PRIMARY KEY NOT NULL,
+    name varchar(255) UNIQUE NOT NULL,
+    draw_allowed boolean NOT NULL,
     period_length int,
-    scored_results boolean
+    scored_results boolean NOT NULL
 );
 
 create table player (
-    id varchar(255) PRIMARY KEY,
-    name varchar(255),
-    rating varchar(255),
-    rd varchar(255),
-    volatility varchar(255),
-    league_id varchar(255) references League(id),
+    id varchar(255) PRIMARY KEY NOT NULL,
+    name varchar(255) NOT NULL,
+    rating varchar(255) NOT NULL,
+    rd varchar(255) NOT NULL,
+    volatility varchar(255) NOT NULL,
+    league_id varchar(255) NOT NULL references League(id),
     UNIQUE (name, league_id)
 );
 
 create table game (
-    id varchar(255) PRIMARY KEY,
-    white_id varchar(255) references Player(id),
-    black_id varchar(255) references Player(id),
-    result int,
+    id varchar(255) PRIMARY KEY NOT NULL,
+    white_id varchar(255) NOT NULL references Player(id),
+    black_id varchar(255) NOT NULL references Player(id),
+    result int NOT NULL,
     written_result varchar(255),
-    played_at TIMESTAMP,
-    league_id varchar(255) references League(id)
+    played_at TIMESTAMP NOT NULL,
+    league_id varchar(255) NOT NULL references League(id)
 );
 
 create table api_user (
-    username varchar(255) PRIMARY KEY,
-    password varchar(255)
+    username varchar(255) PRIMARY KEY NOT NULL,
+    password varchar(255) NOT NULL
 );
 
 create table token (
-    token varchar(255) PRIMARY KEY,
-    username varchar(255) references api_user(username),
-    expiry TIMESTAMP
+    token varchar(255) PRIMARY KEY NOT NULL,
+    username varchar(255) NOT NULL references api_user(username),
+    expiry TIMESTAMP NOT NULL
 );

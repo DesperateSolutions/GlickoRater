@@ -43,14 +43,15 @@ public class GameService {
         Player updatedBlack = glicko.glicko2(black, white, game.result() == 1 ? 0.0 : game.result() == 0 ? 0.5 : 1.0);
 
         query.transaction().inNoResult(() -> {
-            query.update("INSERT INTO Game (id, white_id, black_id, result, written_result, played_at) VALUES (?, ?, ?, ?, ?, ?)")
+            query.update("INSERT INTO Game (id, white_id, black_id, result, written_result, played_at, league_id) VALUES (?, ?, ?, ?, ?, ?, ?)")
                  .params(
                          game.id().toString(),
                          white.id().toString(),
                          black.id().toString(),
                          game.result(),
                          game.writtenResult(),
-                         game.timestamp())
+                         game.timestamp(),
+                         league.toString())
                  .run();
             playerService.updatePlayer(updatedWhite, updatedBlack);
         });

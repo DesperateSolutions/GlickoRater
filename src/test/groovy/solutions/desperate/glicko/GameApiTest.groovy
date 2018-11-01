@@ -32,6 +32,12 @@ class GameApiTest extends GlickoTestApp {
         and:
         new JsonSlurper().parse(client.httpGet("/${league.id}/player/${player1.id}").body().byteStream()).rating == 1578.801716729907
         new JsonSlurper().parse(client.httpGet("/${league.id}/player/${player2.id}").body().byteStream()).rating == 1421.198283270093
+
+        when:
+        def allGames = new JsonSlurper().parse(client.httpGet("/${league.id}/game").body().byteStream())
+
+        then:
+        allGames.size() == 1
     }
 
     def "Can add a game between three players"() {
@@ -74,5 +80,11 @@ class GameApiTest extends GlickoTestApp {
         and:
         new JsonSlurper().parse(client.httpGet("/${league.id}/player/${player1.id}").body().byteStream()).rating == 1499.4739527513502
         new JsonSlurper().parse(client.httpGet("/${league.id}/player/${player3.id}").body().byteStream()).rating == 1596.4657600150126
+
+        when:
+        def allGames = new JsonSlurper().parse(client.httpGet("/${league.id}/game").body().byteStream())
+
+        then:
+        allGames.size() == 2
     }
 }
