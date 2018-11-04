@@ -82,27 +82,42 @@ jobs:
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
             docker push desp/glickorater:${VERSION}
 
+  deploy:
+    docker:
+      - image: desp/kubectl:1.12.2
+
+    steps:
+      - checkout
+
+      - run:
+          name: Deploy to k8s
+          command: |
+            VERSION=$(git describe --tags)
+            mkdir -p ~/.kube/
+            echo ${KUBECONFIG_AS_BASE64} | base64 -d > ~/.kube/config
+            kubectl set -n ratings deployment/glickorater image=desp/glickorater:${VERSION}
+
+
 workflows:
   version: 2
   main:
     jobs:
-      - build:
-          filters:
-            tags:
-              only: /.*/
+      - build
       - publish-to-github:
           requires:
             - build
           filters:
             branches:
               only: master
-            tags:
-              only: /.*/
       - publish-to-docker-hub:
           requires:
             - build
           filters:
             branches:
               only: master
-            tags:
-              only: /.*/
+      - deploy:
+          requires:
+            - publish-to-docker-hub
+          filters:
+            branches:
+              only: master
