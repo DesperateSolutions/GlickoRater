@@ -57,8 +57,8 @@ jobs:
       - run:
           name: "Publish Release on GitHub"
           command: |
-            VERSION=$(git describe --tags)
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./ws/build/libs
+            TAG=$(git describe --tags)
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${TAG} ./ws/build/libs
 
   publish-to-docker-hub:
     docker:
@@ -76,33 +76,47 @@ jobs:
       - run:
           name: Build and push docker image
           command: |
-            VERSION=$(git describe --tags)
             cp -r ./ws/build ./build
-            docker build --tag desp/glickorater:${VERSION} .
+            docker build --tag desp/glickorater:${CIRCLE_SHA1} .
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-            docker push desp/glickorater:${VERSION}
+            docker push desp/glickorater:${CIRCLE_SHA1}
+
+  deploy:
+    docker:
+      - image: desp/kubectl:1.12.2
+
+    steps:
+      - checkout
+
+      - run:
+          name: Deploy to k8s
+          command: |
+            mkdir -p ~/.kube/
+            echo ${KUBECONFIG_AS_BASE64} | base64 -d > ~/.kube/config
+            kubectl -n glickorater set image deployment/glickorater glickorater=desp/glickorater:${CIRCLE_SHA1} --record=true
 
 workflows:
   version: 2
   main:
     jobs:
-      - build:
-          filters:
-            tags:
-              only: /.*/
+      - build
       - publish-to-github:
           requires:
             - build
           filters:
             branches:
-              only: master
+              ignore: /.*/
             tags:
-              only: /.*/
+              only: /^\d+\.\d+\.\d+$/
       - publish-to-docker-hub:
           requires:
             - build
           filters:
             branches:
               only: master
-            tags:
-              only: /.*/
+      - deploy:
+          requires:
+            - publish-to-docker-hub
+          filters:
+            branches:
+              only: master
