@@ -82,7 +82,7 @@ public class LeagueApi {
     public List<LeagueView> leagues() {
         return leagueService.getAllLeagues()
                             .stream()
-                            .map(league -> LeagueView.fromDomain(league, playerService.allPlayers(league.id()), Collections.emptyList()))
+                            .map(league -> LeagueView.fromDomain(league, playerService.allPlayers(league.id()), gameService.allGames(league.id())))
                             .collect(Collectors.toList());
     }
 
