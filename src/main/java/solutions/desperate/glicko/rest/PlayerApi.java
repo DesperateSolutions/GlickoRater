@@ -60,7 +60,7 @@ public class PlayerApi {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<PlayerView> games(@ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") UUID leagueId) {
-        return playerService.allPlayers(leagueId).map((Player player) -> PlayerView.fromDomain(player, gameService.allGames(leagueId))).collect(Collectors.toList());
+        return playerService.allPlayers(leagueId).map((Player player) -> PlayerView.fromDomain(player, gameService.gamesOfPlayer(leagueId, player.id()))).collect(Collectors.toList());
     }
 
     @ApiOperation(value = "Get a specific player from a league")
@@ -69,7 +69,7 @@ public class PlayerApi {
     @Produces(MediaType.APPLICATION_JSON)
     public PlayerView game(@ApiParam(required = true, value = "ID of the league the player belongs to") @PathParam("league") UUID leagueId,
                            @ApiParam(required = true, value = "ID of the player being fetched") @PathParam("id") UUID id) {
-        return PlayerView.fromDomain(playerService.player(id), gameService.allGames(leagueId));
+        return PlayerView.fromDomain(playerService.player(id), gameService.gamesOfPlayer(leagueId, id));
     }
 
     @ApiOperation(value = "Delete a player from a league. Players who have played games can not be deleted", authorizations = @Authorization("bearer"))

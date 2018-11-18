@@ -7,6 +7,7 @@ import io.swagger.annotations.Authorization;
 import solutions.desperate.glicko.domain.model.League;
 import solutions.desperate.glicko.domain.model.Settings;
 import solutions.desperate.glicko.domain.service.AuthService;
+import solutions.desperate.glicko.domain.service.GameService;
 import solutions.desperate.glicko.domain.service.LeagueService;
 import solutions.desperate.glicko.domain.service.PlayerService;
 import solutions.desperate.glicko.rest.command.AddLeague;
@@ -37,12 +38,14 @@ import java.util.stream.Collectors;
 public class LeagueApi {
     private final LeagueService leagueService;
     private final PlayerService playerService;
+    private final GameService gameService;
     private final AuthService authService;
 
     @Inject
-    public LeagueApi(LeagueService leagueService, PlayerService playerService, AuthService authService) {
+    public LeagueApi(LeagueService leagueService, PlayerService playerService, GameService gameService, AuthService authService) {
         this.leagueService = leagueService;
         this.playerService = playerService;
+        this.gameService = gameService;
         this.authService = authService;
     }
 
@@ -91,7 +94,7 @@ public class LeagueApi {
         return LeagueView.fromDomain(
                 leagueService.getLeague(id).orElseThrow(() -> new NotFoundException("No such league")),
                 playerService.allPlayers(id),
-                Collections.emptyList()
+                gameService.allGames(id)
         );
     }
 

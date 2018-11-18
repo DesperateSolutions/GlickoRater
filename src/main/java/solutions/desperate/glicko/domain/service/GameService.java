@@ -10,9 +10,9 @@ import solutions.desperate.glicko.domain.service.glicko.Glicko;
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 public class GameService {
     private final Query query;
@@ -64,8 +64,12 @@ public class GameService {
 
     }
 
-    public Stream<Game> allGames(UUID leagueId) {
-        return query.select("SELECT * FROM Game where league_id = ?").params(leagueId.toString()).listResult(gameMapper()).stream();
+    public List<Game> allGames(UUID leagueId) {
+        return query.select("SELECT * FROM Game where league_id = ?").params(leagueId.toString()).listResult(gameMapper());
+    }
+
+    public List<UUID> gamesOfPlayer(UUID leagueId, UUID playerId) {
+        return query.select("SELECT id FROM game WHERE league_id = ? AND (white_id = ? OR black_id = ?)").params(leagueId.toString(), playerId.toString(), playerId.toString()).listResult(rs -> UUID.fromString(rs.getString("id")));
     }
 
     public void delete(UUID id) {

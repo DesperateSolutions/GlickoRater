@@ -25,12 +25,12 @@ public class PlayerView {
         this.games = games;
     }
 
-    public static PlayerView fromDomain(Player player, Stream<Game> games) {
+    public static PlayerView fromDomain(Player player, List<UUID> games) {
         return new PlayerView(player.id(),
                               player.name(),
                               Double.valueOf(player.rating()),
                               Double.valueOf(player.rd()),
                               Double.valueOf(player.volatility()),
-                              games.map(Game::id).collect(Collectors.toList()));
+                              games);
     }
 }

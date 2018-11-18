@@ -42,12 +42,12 @@ public class GameApi {
                         @ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") UUID leagueId,
                         GameCommand game) {
         if (game == null || !game.isValid()) {
-            throw new BadRequestException("Invalid gamne");
+            throw new BadRequestException("Invalid game");
         }
         gameService.addGame(Game.fromCommand(game), leagueId);
     }
 
-    @ApiOperation(value = "Add mutliple games to a league, the order of games is sensitive", authorizations = @Authorization("bearer"))
+    @ApiOperation(value = "Add multiple games to a league, the order of games is sensitive", authorizations = @Authorization("bearer"))
     @POST
     @Path("batch")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -66,7 +66,7 @@ public class GameApi {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<GameView> games(@ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") UUID leagueId) {
-        return gameService.allGames(leagueId).map(GameView::fromDomain).collect(Collectors.toList());
+        return gameService.allGames(leagueId).stream().map(GameView::fromDomain).collect(Collectors.toList());
     }
 
     @ApiOperation(value = "Get a specific game from a league")
