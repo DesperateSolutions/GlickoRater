@@ -46,7 +46,7 @@ public class PlayerService {
     }
 
     public void deletePlayer(UUID id) {
-        query.update("DELETE FROM Player WHERE id = ?").params(id).run();
+        query.update("DELETE FROM Player WHERE id = ?").params(id.toString()).run();
     }
 
     private Mapper<Player> playerMapper() {

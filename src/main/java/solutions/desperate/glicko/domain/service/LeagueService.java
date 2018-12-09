@@ -44,7 +44,13 @@ public class LeagueService {
     }
 
     public void deleteLeague(UUID id) {
-        query.update("DELETE FROM League WHERE id = ?").params(id).run();
+        query.transaction()
+             .inNoResult(() -> {
+                 query.update("DELETE FROM game WHERE league_id = ?").params(id.toString()).run();
+                 query.update("DELETE FROM player WHERE league_id = ?").params(id.toString()).run();
+                 query.update("DELETE FROM League WHERE id = ?").params(id.toString()).run();
+             }
+        );
     }
 
     private Mapper<League> leagueMapper() {
