@@ -10,8 +10,10 @@ import solutions.desperate.glicko.domain.service.glicko.Glicko;
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public class GameService {
@@ -65,18 +67,42 @@ public class GameService {
     }
 
     public List<Game> allGames(UUID leagueId) {
-        return query.select("SELECT * FROM Game where league_id = ?").params(leagueId.toString()).listResult(gameMapper());
+        return query.select("SELECT * FROM Game WHERE league_id = ? ORDER BY played_at").params(leagueId.toString()).listResult(gameMapper());
     }
 
     public List<UUID> gamesOfPlayer(UUID leagueId, UUID playerId) {
         return query.select("SELECT id FROM game WHERE league_id = ? AND (white_id = ? OR black_id = ?)").params(leagueId.toString(), playerId.toString(), playerId.toString()).listResult(rs -> UUID.fromString(rs.getString("id")));
     }
 
-    public void delete(UUID id) {
-        query.update("DELETE FROM Game WHERE id = ?").params(id.toString()).run();
+    public void delete(UUID leagueId, UUID id) {
+        query.transaction().inNoResult(() -> {
+            List<Game> allGames = allGames(leagueId);
+            Set<UUID> players = new HashSet<>();
+            Player defaultPlayer = glicko.defaultPlayer("temp", leagueId);
+            allGames.forEach(game -> {
+                if (!players.contains(game.black())) {
+                    players.add(game.black());
+                    playerService.resetPlayer(game.black(), defaultPlayer.rating(), defaultPlayer.rd(), defaultPlayer.volatility());
+                }
+                if (!players.contains(game.white())) {
+                    players.add(game.white());
+                    playerService.resetPlayer(game.white(), defaultPlayer.rating(), defaultPlayer.rd(), defaultPlayer.volatility());
+                }
+                query.update("DELETE FROM Game WHERE id = ?").params(game.id().toString()).run();
+                if (!game.id().equals(id)) {
+                    addGame(game, leagueId);
+                }
+            });
+        });
     }
 
     private Mapper<Game> gameMapper() {
-        return rs -> new Game(UUID.fromString(rs.getString("id")), UUID.fromString(rs.getString("white_id")), UUID.fromString(rs.getString("black_id")), rs.getString("written_result"), rs.getTimestamp("played_at").toInstant());
+        return rs -> new Game(
+                UUID.fromString(rs.getString("id")),
+                UUID.fromString(rs.getString("white_id")),
+                UUID.fromString(rs.getString("black_id")),
+                rs.getString("written_result"),
+                rs.getTimestamp("played_at").toInstant()
+        );
     }
 }

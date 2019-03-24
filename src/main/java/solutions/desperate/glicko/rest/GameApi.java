@@ -78,13 +78,13 @@ public class GameApi {
         return GameView.fromDomain(gameService.game(id).orElseThrow(() -> new NotFoundException("No such game")));
     }
 
-    @ApiOperation(value = "Delete a game from a league. Important to note that currently this does not roll back the rating", authorizations = @Authorization("bearer"))
+    @ApiOperation(value = "Delete a game from a league. Needs to recalculate all ratings again afterwards", authorizations = @Authorization("bearer"))
     @DELETE
     @Path("{id}")
     public void deleteGame(@ApiParam(hidden = true) @HeaderParam("authorization") String authorization,
                            @ApiParam(required = true, value = "ID of the league the game belongs to") @PathParam("league") UUID leagueId,
                            @ApiParam(required = true, value = "ID of the game being deleted") @PathParam("id") UUID id) {
-        gameService.delete(id);
+        gameService.delete(leagueId, id);
     }
 
 }
