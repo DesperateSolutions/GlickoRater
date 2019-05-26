@@ -102,7 +102,7 @@ public class GameService {
                     if(bestStreak < currentWinStreak) {
                         bestStreak = currentWinStreak;
                     }
-                } else if (game.result() == 0) {
+                } else if (game.result() == -1) {
                     losses++;
                     if(lastResult == 0) {
                         currentLossStreak++;
@@ -120,7 +120,7 @@ public class GameService {
                     currentWinStreak = 0;
                 }
             } else {
-                if(game.result() == 0) {
+                if(game.result() == -1) {
                     wins++;
                     if(lastResult == 1) {
                         currentWinStreak++;
