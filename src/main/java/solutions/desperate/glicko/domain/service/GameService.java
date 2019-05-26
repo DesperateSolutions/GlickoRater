@@ -1,11 +1,13 @@
 package solutions.desperate.glicko.domain.service;
 
+import org.codejargon.fluentjdbc.api.mapper.Mappers;
 import org.codejargon.fluentjdbc.api.query.Mapper;
 import org.codejargon.fluentjdbc.api.query.Query;
 import solutions.desperate.glicko.domain.model.Game;
 import solutions.desperate.glicko.domain.model.Player;
 import solutions.desperate.glicko.domain.model.Settings;
 import solutions.desperate.glicko.domain.service.glicko.Glicko;
+import solutions.desperate.glicko.rest.view.StatsView;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
@@ -73,6 +75,86 @@ public class GameService {
     public List<UUID> gamesOfPlayer(UUID leagueId, UUID playerId) {
         return query.select("SELECT id FROM game WHERE league_id = ? AND (white_id = ? OR black_id = ?)").params(leagueId.toString(), playerId.toString(), playerId.toString()).listResult(rs -> UUID.fromString(rs.getString("id")));
     }
+
+    public StatsView stats(UUID id, UUID leagueId) {
+        List<Game> games = query.select("SELECT * FROM Game WHERE league_id = ? AND (black_id = ? OR white_id = ?) ORDER BY played_at")
+                    .params(leagueId.toString(), id.toString(), id.toString())
+                    .listResult(gameMapper());
+        int bestStreak = 0;
+        int worstStreak = 0;
+        int wins = 0;
+        int draws = 0;
+        int losses = 0;
+        int currentWinStreak = 0;
+        int currentLossStreak = 0;
+        int lastResult = -1;
+        for (Game game : games) {
+            if(game.white().equals(id)) {
+                if(game.result() == 1) {
+                    wins++;
+                    if(lastResult == 1) {
+                        currentWinStreak++;
+                    } else {
+                        lastResult = 1;
+                        currentLossStreak = 0;
+                        currentWinStreak = 1;
+                    }
+                    if(bestStreak < currentWinStreak) {
+                        bestStreak = currentWinStreak;
+                    }
+                } else if (game.result() == 0) {
+                    losses++;
+                    if(lastResult == 0) {
+                        currentLossStreak++;
+                    } else {
+                        lastResult = 0;
+                        currentLossStreak = 1;
+                        currentWinStreak = 0;
+                    }
+                    if(worstStreak < currentLossStreak) {
+                        worstStreak = currentLossStreak;
+                    }
+                } else {
+                    draws++;
+                    currentLossStreak = 0;
+                    currentWinStreak = 0;
+                }
+            } else {
+                if(game.result() == 0) {
+                    wins++;
+                    if(lastResult == 1) {
+                        currentWinStreak++;
+                    } else {
+                        lastResult = 1;
+                        currentLossStreak = 0;
+                        currentWinStreak = 1;
+                    }
+                    if(bestStreak < currentWinStreak) {
+                        bestStreak = currentWinStreak;
+                    }
+                } else if (game.result() == 1) {
+                    losses++;
+                    if(lastResult == 0) {
+                        currentLossStreak++;
+                    } else {
+                        lastResult = 0;
+                        currentLossStreak = 1;
+                        currentWinStreak = 0;
+                    }
+                    if(worstStreak < currentLossStreak) {
+                        worstStreak = currentLossStreak;
+                    }
+                } else {
+                    draws++;
+                    currentLossStreak = 0;
+                    currentWinStreak = 0;
+                }
+            }
+        }
+        return new StatsView(id, wins, draws, losses, bestStreak, worstStreak);
+    }
+
+
 
     public void delete(UUID leagueId, UUID id) {
         query.transaction().inNoResult(() -> {
