@@ -1,22 +1,19 @@
 package solutions.desperate.glicko.domain.service;
 
-import org.codejargon.fluentjdbc.api.mapper.Mappers;
 import org.codejargon.fluentjdbc.api.query.Mapper;
 import org.codejargon.fluentjdbc.api.query.Query;
 import solutions.desperate.glicko.domain.model.Game;
 import solutions.desperate.glicko.domain.model.Player;
 import solutions.desperate.glicko.domain.model.Settings;
+import solutions.desperate.glicko.domain.model.Stats;
 import solutions.desperate.glicko.domain.service.glicko.Glicko;
+import solutions.desperate.glicko.rest.view.RatingView;
 import solutions.desperate.glicko.rest.view.StatsView;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class GameService {
     private final Query query;
@@ -57,10 +54,14 @@ public class GameService {
                          game.timestamp(),
                          league.toString())
                  .run();
+            query.update("INSERT INTO rating_history (player_id, game_id, rating, rd, volatility) VALUES (?, ?, ?, ?, ?)")
+                 .params(updatedWhite.id().toString(), game.id().toString(), updatedWhite.rating(), updatedWhite.rd(), updatedWhite.volatility())
+                 .run();
+            query.update("INSERT INTO rating_history (player_id, game_id, rating, rd, volatility) VALUES (?, ?, ?, ?, ?)")
+                 .params(updatedBlack.id().toString(), game.id().toString(), updatedBlack.rating(), updatedBlack.rd(), updatedBlack.volatility())
+                 .run();
             playerService.updatePlayer(updatedWhite, updatedBlack);
         });
-
-
     }
 
     public Optional<Game> game(UUID id) {
@@ -73,13 +74,18 @@ public class GameService {
     }
 
     public List<UUID> gamesOfPlayer(UUID leagueId, UUID playerId) {
-        return query.select("SELECT id FROM game WHERE league_id = ? AND (white_id = ? OR black_id = ?)").params(leagueId.toString(), playerId.toString(), playerId.toString()).listResult(rs -> UUID.fromString(rs.getString("id")));
+        return query.select("SELECT id FROM game WHERE league_id = ? AND (white_id = ? OR black_id = ?)").params(leagueId.toString(), playerId.toString(), playerId.toString())
+                    .listResult(rs -> UUID.fromString(rs.getString("id")));
     }
 
     public StatsView stats(UUID id, UUID leagueId) {
-        List<Game> games = query.select("SELECT * FROM Game WHERE league_id = ? AND (black_id = ? OR white_id = ?) ORDER BY played_at")
-                    .params(leagueId.toString(), id.toString(), id.toString())
-                    .listResult(gameMapper());
+        playerService.player(id);
+        List<Stats> stats = query
+                .select("SELECT g.id, g.white_id, g.black_id, g.written_result, g.played_at, r.rating, r.rd, r.volatility FROM Game as g " +
+                        "INNER JOIN rating_history as r ON g.id = r.game_id " +
+                        "WHERE g.league_id = ? AND (g.black_id = ? OR g.white_id = ?) AND r.player_id = ? ORDER BY played_at")
+                .params(leagueId.toString(), id.toString(), id.toString(), id.toString())
+                .listResult(statsMapper(id));
         int bestStreak = 0;
         int worstStreak = 0;
         int wins = 0;
@@ -88,72 +94,46 @@ public class GameService {
         int currentWinStreak = 0;
         int currentLossStreak = 0;
         int lastResult = -1;
-        for (Game game : games) {
-            if(game.white().equals(id)) {
-                if(game.result() == 1) {
-                    wins++;
-                    if(lastResult == 1) {
-                        currentWinStreak++;
-                    } else {
-                        lastResult = 1;
-                        currentLossStreak = 0;
-                        currentWinStreak = 1;
-                    }
-                    if(bestStreak < currentWinStreak) {
-                        bestStreak = currentWinStreak;
-                    }
-                } else if (game.result() == -1) {
-                    losses++;
-                    if(lastResult == 0) {
-                        currentLossStreak++;
-                    } else {
-                        lastResult = 0;
-                        currentLossStreak = 1;
-                        currentWinStreak = 0;
-                    }
-                    if(worstStreak < currentLossStreak) {
-                        worstStreak = currentLossStreak;
-                    }
+        List<RatingView> history = new ArrayList<>();
+        query.select("SELECT rating, rd, volatility FROM rating_history WHERE player_id = ? AND game_id is NULL")
+             .params(id.toString())
+             .firstResult(rs -> new RatingView(Double.parseDouble(rs.getString("rating")), Double.parseDouble(rs.getString("rd")), Double.parseDouble(rs.getString("volatility")), null))
+             .map(history::add);
+        for (Stats stat : stats) {
+            if (stat.result() == 1) {
+                wins++;
+                if (lastResult == 1) {
+                    currentWinStreak++;
                 } else {
-                    draws++;
+                    lastResult = 1;
                     currentLossStreak = 0;
+                    currentWinStreak = 1;
+                }
+                if (bestStreak < currentWinStreak) {
+                    bestStreak = currentWinStreak;
+                }
+            } else if (stat.result() == -1) {
+                losses++;
+                if (lastResult == 0) {
+                    currentLossStreak++;
+                } else {
+                    lastResult = 0;
+                    currentLossStreak = 1;
                     currentWinStreak = 0;
+                }
+                if (worstStreak < currentLossStreak) {
+                    worstStreak = currentLossStreak;
                 }
             } else {
-                if(game.result() == -1) {
-                    wins++;
-                    if(lastResult == 1) {
-                        currentWinStreak++;
-                    } else {
-                        lastResult = 1;
-                        currentLossStreak = 0;
-                        currentWinStreak = 1;
-                    }
-                    if(bestStreak < currentWinStreak) {
-                        bestStreak = currentWinStreak;
-                    }
-                } else if (game.result() == 1) {
-                    losses++;
-                    if(lastResult == 0) {
-                        currentLossStreak++;
-                    } else {
-                        lastResult = 0;
-                        currentLossStreak = 1;
-                        currentWinStreak = 0;
-                    }
-                    if(worstStreak < currentLossStreak) {
-                        worstStreak = currentLossStreak;
-                    }
-                } else {
-                    draws++;
-                    currentLossStreak = 0;
-                    currentWinStreak = 0;
-                }
+                draws++;
+                currentLossStreak = 0;
+                currentWinStreak = 0;
+                lastResult = -1;
             }
+            history.add(new RatingView(Double.parseDouble(stat.rating()), Double.parseDouble(stat.rd()), Double.parseDouble(stat.volatility()), stat.timestamp()));
         }
-        return new StatsView(id, wins, draws, losses, bestStreak, worstStreak);
+        return new StatsView(id, wins, draws, losses, bestStreak, worstStreak, history);
     }
-
 
 
     public void delete(UUID leagueId, UUID id) {
@@ -171,6 +151,7 @@ public class GameService {
                     playerService.resetPlayer(game.white(), defaultPlayer.rating(), defaultPlayer.rd(), defaultPlayer.volatility());
                 }
                 query.update("DELETE FROM Game WHERE id = ?").params(game.id().toString()).run();
+                query.update("DELETE FROM rating_history WHERE game_id = ?").params(game.id().toString()).run();
                 if (!game.id().equals(id)) {
                     addGame(game, leagueId);
                 }
@@ -186,5 +167,21 @@ public class GameService {
                 rs.getString("written_result"),
                 rs.getTimestamp("played_at").toInstant()
         );
+    }
+
+    private Mapper<Stats> statsMapper(UUID playerId) {
+        return rs -> {
+            String gameId = rs.getString("id");
+            return new Stats(
+                    gameId == null ? null : UUID.fromString(gameId),
+                    playerId,
+                    rs.getString("written_result"),
+                    rs.getTimestamp("played_at").toInstant(),
+                    rs.getString("rating"),
+                    rs.getString("rd"),
+                    rs.getString("volatility"),
+                    UUID.fromString(rs.getString("white_id")).equals(playerId)
+            );
+        };
     }
 }

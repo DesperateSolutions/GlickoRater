@@ -28,9 +28,9 @@ public class PlayerView {
     public static PlayerView fromDomain(Player player, List<UUID> games) {
         return new PlayerView(player.id(),
                               player.name(),
-                              Double.valueOf(player.rating()),
-                              Double.valueOf(player.rd()),
-                              Double.valueOf(player.volatility()),
+                              Double.parseDouble(player.rating()),
+                              Double.parseDouble(player.rd()),
+                              Double.parseDouble(player.volatility()),
                               games);
     }
 }
