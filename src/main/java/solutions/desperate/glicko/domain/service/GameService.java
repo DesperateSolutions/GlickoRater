@@ -13,7 +13,6 @@ import solutions.desperate.glicko.rest.view.StatsView;
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
-import java.time.Instant;
 import java.util.*;
 
 public class GameService {

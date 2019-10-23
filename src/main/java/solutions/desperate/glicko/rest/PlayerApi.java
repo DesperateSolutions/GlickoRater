@@ -82,7 +82,8 @@ public class PlayerApi {
         playerService.deletePlayer(id);
     }
 
-    @ApiOperation(value = "Get stats on a specific player from a league")
+    @ApiOperation(value = "Get stats on a specific player from a league. The list in rating over time is sorted based on when the game was played in a descending order. " +
+                          "If a timestamp is missing from a rating the time is unknown but can safely be assumed to be before any other rating in the list")
     @GET
     @Path("{id}/stats")
     @Produces(MediaType.APPLICATION_JSON)
