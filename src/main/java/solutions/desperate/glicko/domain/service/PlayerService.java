@@ -5,6 +5,7 @@ import org.codejargon.fluentjdbc.api.query.Query;
 import solutions.desperate.glicko.domain.model.Player;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -18,9 +19,14 @@ public class PlayerService {
     }
 
     public void addPlayer(Player player, UUID leagueId) {
-        query.update("INSERT INTO Player (id, name, rating, rd, volatility, league_id) VALUES (?, ?, ?, ?, ?, ?)")
-             .params(player.id().toString(), player.name(), player.rating(), player.rd(), player.volatility(), leagueId.toString())
-             .run();
+        query.transaction().inNoResult(() -> {
+            query.update("INSERT INTO Player (id, name, rating, rd, volatility, league_id) VALUES (?, ?, ?, ?, ?, ?)")
+                 .params(player.id().toString(), player.name(), player.rating(), player.rd(), player.volatility(), leagueId.toString())
+                 .run();
+            query.update("INSERT INTO rating_history (player_id, rating, rd, volatility) VALUES (?,?,?,?)")
+                 .params(player.id().toString(), player.rating(), player.rd(), player.volatility())
+                 .run();
+        });
     }
 
     public void updatePlayer(UUID id, String name) {
@@ -42,7 +48,8 @@ public class PlayerService {
 
 
     public Player player(UUID id) {
-        return query.select("SELECT * FROM Player WHERE id = ?").params(id.toString()).singleResult(playerMapper());
+        return query.select("SELECT * FROM Player WHERE id = ?").params(id.toString()).firstResult(playerMapper())
+                    .orElseThrow(() -> new NotFoundException("No play with ID " + id));
     }
 
     public void deletePlayer(UUID id) {
