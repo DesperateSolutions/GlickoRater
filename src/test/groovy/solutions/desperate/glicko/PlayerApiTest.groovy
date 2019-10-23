@@ -68,8 +68,6 @@ class PlayerApiTest extends GlickoTestApp {
         player2Stats.ratingOverTime.size() == 1
         player1Stats.ratingOverTime[0].rating == 1500
         player2Stats.ratingOverTime[0].rating == 1500
-
-        expect:
         client.httpPost("/${league.id}/game", makeGame(player1.id, player2.id, "1-0")).code() == 204
 
         when:
