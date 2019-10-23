@@ -70,8 +70,7 @@ jobs:
       - attach_workspace:
           at: ./ws/
 
-      - setup_remote_docker:
-          docker_layer_caching: true
+      - setup_remote_docker
 
       - run:
           name: Build and push docker image
