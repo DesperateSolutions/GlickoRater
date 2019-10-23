@@ -57,7 +57,11 @@ public class PlayerService {
     }
 
     public void resetPlayer(UUID id, String rating, String rd, String volatility) {
+        query.update("DELETE FROM rating_history WHERE player_id = ?").params(id.toString()).run();
         query.update("UPDATE Player SET rating = ?, rd = ?, volatility = ? WHERE id = ?").params(rating, rd, volatility, id.toString()).run();
+        query.update("INSERT INTO rating_history (player_id, rating, rd, volatility) VALUES (?,?,?,?)")
+             .params(id.toString(), rating, rd, volatility)
+             .run();
     }
 
     private Mapper<Player> playerMapper() {

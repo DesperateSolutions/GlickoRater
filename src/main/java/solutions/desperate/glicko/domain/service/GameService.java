@@ -151,7 +151,6 @@ public class GameService {
                     playerService.resetPlayer(game.white(), defaultPlayer.rating(), defaultPlayer.rd(), defaultPlayer.volatility());
                 }
                 query.update("DELETE FROM Game WHERE id = ?").params(game.id().toString()).run();
-                query.update("DELETE FROM rating_history WHERE game_id = ?").params(game.id().toString()).run();
                 if (!game.id().equals(id)) {
                     addGame(game, leagueId);
                 }
